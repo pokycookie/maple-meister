@@ -1,0 +1,49 @@
+.App {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .indicator {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 80px;
+      font-weight: 600;
+      padding: 30px;
+      box-sizing: border-box;
+      color: #2c3333;
+
+      .pause {
+        color: #eb4747;
+      }
+    }
+
+    .sliderArea {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    .controlArea {
+      margin-top: 30px;
+      button {
+        width: 100px;
+        height: 30px;
+        margin: 0px 10px;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+    }
+  }
+}
