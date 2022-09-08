@@ -46,4 +46,15 @@
       }
     }
   }
+
+  .permissionBtn {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    border-radius: 100%;
+    border: 2px solid #2c3333;
+    cursor: pointer;
+  }
 }

@@ -22,7 +22,7 @@ export default function App() {
       setTime((prev) => prev - 1);
     } else {
       setTime(timeToNumber({ hour, minute, second }));
-      const notification = new Notification("Maple meister");
+      new Notification("Time's up");
     }
   };
 
@@ -47,6 +47,13 @@ export default function App() {
   useEffect(() => {
     setTime(timeToNumber({ hour, minute, second }));
   }, [hour, minute, second]);
+
+  // Permission
+  useEffect(() => {
+    if (Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+  }, []);
 
   return (
     <div className="App">
@@ -74,6 +81,18 @@ export default function App() {
           <button onClick={startHandler}>{isStart ? "stop" : "start"}</button>
         </div>
       </div>
+      <button
+        className="permissionBtn"
+        onClick={() => {
+          if (Notification.permission === "denied") {
+            alert("알림 권한을 허용해주세요.");
+          } else {
+            alert("알림 권한이 허용되어 있습니다.");
+          }
+        }}
+      >
+        !
+      </button>
     </div>
   );
 }
