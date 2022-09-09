@@ -1,15 +1,35 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Maple Meister",
+  "name": "Maple Meister - Repeate timer",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "icons/favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
+    },
+    {
+      "src": "icons/mstile-70x70.png",
+      "sizes": "70x70",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/mstile-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/mstile-150x150.png",
+      "sizes": "150x150",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/mstile-310x310.png",
+      "sizes": "310x310",
+      "type": "image/png"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#2c3333",
   "background_color": "#ffffff"
 }
