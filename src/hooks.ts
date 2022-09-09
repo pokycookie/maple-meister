@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { setInterval, clearInterval } from "worker-timers";
 
 type ICallback = () => void;
 
