@@ -1,0 +1,7 @@
+.time-picker-wheel-container {
+  width: 60px;
+  height: 80px;
+  overflow-y: hidden;
+  background-color: black;
+  color: white;
+}
