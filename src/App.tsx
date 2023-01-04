@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Slider from "./components/slider";
 import { useInterval } from "./hooks";
 import "./styles/app.scss";
+import TimePicker from "./components/timePicker/timePicker";
 
 interface ITime {
   hour: number;
@@ -66,11 +67,19 @@ export default function App() {
           )}
         </div>
         {isStart ? null : (
-          <div className="sliderArea">
-            <Slider min={0} max={23} default={hour} onChange={(value) => setHour(value)} />
-            <Slider min={0} max={59} default={minute} onChange={(value) => setMinute(value)} />
-            <Slider min={0} max={59} default={second} onChange={(value) => setSecond(value)} />
-          </div>
+          <TimePicker
+            default={{ hour, minute, second }}
+            onChange={(time) => {
+              setHour(time.hour);
+              setMinute(time.minute);
+              setSecond(time.second);
+            }}
+          />
+          // <div className="sliderArea">
+          //   <Slider min={0} max={23} default={hour} onChange={(value) => setHour(value)} />
+          //   <Slider min={0} max={59} default={minute} onChange={(value) => setMinute(value)} />
+          //   <Slider min={0} max={59} default={second} onChange={(value) => setSecond(value)} />
+          // </div>
         )}
         <div className="controlArea">
           {isStart ? (

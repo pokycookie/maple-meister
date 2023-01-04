@@ -5,13 +5,15 @@ interface IProps {
   max?: number;
   step?: number;
   default?: number;
+  onChange?: (value: number) => void;
 }
 
 function Wheel(props: IProps) {
-  const [min, setMin] = useState(0);
-  const [max, setMax] = useState(59);
-  const [value, setValue] = useState(0);
-  const [cellArr, setCellArr] = useState<number[]>([]);
+  const min = props.min ?? 0;
+  const max = props.max ?? 59;
+
+  const [value, setValue] = useState(props.default ?? min);
+  const [cellArr, setCellArr] = useState<number[]>(getCellRange(min, max, props.default ?? min, 2));
 
   const wheelMinMaxValue = useCallback(
     (value: number, action: "add" | "subtract", step: number = 1) => {
@@ -32,40 +34,45 @@ function Wheel(props: IProps) {
     [max, min]
   );
 
-  const getCellArr = useCallback(() => {
-    const resultArr = [];
-    for (let i = 2; i > 0; i--) {
-      resultArr.push(wheelMinMaxValue(value, "subtract", i));
-    }
-    resultArr.push(value);
-    for (let i = 0; i < 2; i++) {
-      resultArr.push(wheelMinMaxValue(value, "add", i + 1));
-    }
-    return resultArr;
-  }, [value, wheelMinMaxValue]);
-
   const wheelHandler = (e: React.WheelEvent<HTMLDivElement>) => {
     if (e.deltaY > 0) {
       // Wheel down
-      e.currentTarget.scrollBy({ top: 16 });
-      setValue(wheelMinMaxValue(value, "subtract"));
+      setValue(wheelMinMaxValue(value, "add"));
+      const tmpArr = [...cellArr];
+      tmpArr.push(tmpArr.shift() ?? 0);
+      setCellArr(tmpArr);
     } else {
       // Wheel up
-      e.currentTarget.scrollBy({ top: -16 });
-      setValue(wheelMinMaxValue(value, "add"));
+      setValue(wheelMinMaxValue(value, "subtract"));
+      const tmpArr = [...cellArr];
+      tmpArr.unshift(tmpArr.pop() ?? 0);
+      setCellArr(tmpArr);
     }
   };
 
+  const getStyle = (i: number) => {
+    const style: React.CSSProperties | undefined = {};
+    if (i < 5) {
+      style.transform = `rotateX(${(i - 2) * 30}deg)`;
+    }
+    if (i === 2) {
+      style.fontSize = "20px";
+      style.color = "#D28512";
+      style.fontWeight = "600";
+    }
+    return style;
+  };
+
   useEffect(() => {
-    setCellArr(getCellArr());
-  }, [getCellArr, value]);
+    if (props.onChange) props.onChange(value);
+  }, [value]);
 
   return (
     <div className="time-picker-wheel-container" onWheel={wheelHandler}>
-      {cellArr.map((e) => {
+      {cellArr.slice(0, 5).map((e, i) => {
         return (
-          <div className="time-picker-wheel-cell" key={e}>
-            {e}
+          <div className="time-picker-wheel-cell" key={i} style={getStyle(i)}>
+            {getDoubleDigit(e)}
           </div>
         );
       })}
@@ -73,12 +80,36 @@ function Wheel(props: IProps) {
   );
 }
 
-function range(end: number, start?: number) {
+function range(end: number, start?: number, roll?: number) {
   const resultArr: number[] = [];
   for (let i = start ?? 0; i < end; i++) {
     resultArr.push(i);
   }
+  for (let i = 0; i < (roll ?? 0); i++) {
+    resultArr.unshift(resultArr.pop() ?? 0);
+  }
+
   return resultArr;
+}
+
+function getCellRange(min: number, max: number, start: number, roll?: number) {
+  const resultArr: number[] = [];
+  for (let i = min; i <= max; i++) {
+    resultArr.push(i);
+  }
+  while (resultArr[0] !== start) {
+    resultArr.unshift(resultArr.pop() ?? 0);
+  }
+  for (let i = 0; i < (roll ?? 0); i++) {
+    resultArr.unshift(resultArr.pop() ?? 0);
+  }
+
+  return resultArr;
+}
+
+function getDoubleDigit(value: number) {
+  if (value < 10) return `0${value}`;
+  return `${value}`;
 }
 
 export default Wheel;
