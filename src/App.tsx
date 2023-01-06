@@ -63,7 +63,13 @@ export default function App() {
           {isStart ? (
             <p className={pause ? "pause" : ""}>{getTimeText(time)}</p>
           ) : (
-            <p>{getTimeText(timeToNumber({ hour, minute, second }))}</p>
+            <>
+              <p className="time-number">{getDoubleDigit(hour)}</p>
+              <p>:</p>
+              <p className="time-number">{getDoubleDigit(minute)}</p>
+              <p>:</p>
+              <p className="time-number">{getDoubleDigit(second)}</p>
+            </>
           )}
         </div>
         {isStart ? null : (
@@ -75,11 +81,6 @@ export default function App() {
               setSecond(time.second);
             }}
           />
-          // <div className="sliderArea">
-          //   <Slider min={0} max={23} default={hour} onChange={(value) => setHour(value)} />
-          //   <Slider min={0} max={59} default={minute} onChange={(value) => setMinute(value)} />
-          //   <Slider min={0} max={59} default={second} onChange={(value) => setSecond(value)} />
-          // </div>
         )}
         <div className="controlArea">
           {isStart ? (
@@ -99,9 +100,7 @@ export default function App() {
             alert("알림 권한이 허용되어 있습니다.");
           }
         }}
-      >
-        !
-      </button>
+      ></button>
     </div>
   );
 }

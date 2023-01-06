@@ -1,6 +1,8 @@
 .App {
   width: 100vw;
   height: 100vh;
+  min-width: 500px;
+  min-height: 500px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -23,6 +25,11 @@
       padding: 30px;
       box-sizing: border-box;
       color: #2c3333;
+
+      .time-number {
+        width: 110px;
+        text-align: center;
+      }
 
       .pause {
         color: #eb4747;
