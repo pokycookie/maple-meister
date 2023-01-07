@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Slider from "./components/slider";
 import { useInterval } from "./hooks";
 import "./styles/app.scss";
 import TimePicker from "./components/timePicker/timePicker";

@@ -15,6 +15,7 @@ function TimePicker(props: IProps) {
 
   useEffect(() => {
     if (props.onChange) props.onChange({ hour, minute, second });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hour, minute, second]);
 
   return (
