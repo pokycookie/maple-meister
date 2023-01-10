@@ -4,6 +4,7 @@ import TimerPage from "./pages/timer";
 export default function App() {
   return (
     <div className="App">
+      <div className="nav"></div>
       <div className="main">
         <TimerPage />
       </div>
