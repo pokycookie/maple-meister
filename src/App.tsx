@@ -1,13 +1,16 @@
 import "./styles/app.scss";
 import TimerPage from "./pages/timer";
+import Navigator from "./components/navigator/navigator";
 
 export default function App() {
   return (
     <div className="App">
-      <div className="nav"></div>
-      <div className="main">
+      <nav>
+        <Navigator />
+      </nav>
+      <main>
         <TimerPage />
-      </div>
+      </main>
       <button
         className="permissionBtn"
         onClick={() => {

@@ -1,0 +1,30 @@
+.nav {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 20px 10px;
+}
+
+.nav-divider {
+  width: 100%;
+  margin: 5px 0px;
+  border: 1px solid white;
+}
+
+.nav-icon-area {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-icon {
+  font-size: 20px;
+  color: white;
+  cursor: pointer;
+}
