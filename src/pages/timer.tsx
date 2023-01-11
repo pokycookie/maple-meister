@@ -3,6 +3,7 @@ import { ITime } from "../types";
 import { useInterval } from "../hooks";
 import TimePicker from "../components/timePicker/timePicker";
 import "../styles/pages/timer.scss";
+import { db } from "../db";
 
 function TimerPage() {
   const [hour, setHour] = useState(0);
@@ -42,6 +43,14 @@ function TimerPage() {
 
   useEffect(() => {
     setTime(timeToNumber({ hour, minute, second }));
+    // try {
+    //   db.timer.add({
+    //     title: "abc",
+    //     time: timeToNumber({ hour, minute, second }),
+    //   });
+    // } catch (err) {
+    //   console.error(err);
+    // }
   }, [hour, minute, second]);
 
   // Permission
