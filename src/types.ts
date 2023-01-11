@@ -1,4 +1,4 @@
-export type TPage = "timer";
+export type TPage = "timer" | "ledger" | "marketPrice";
 
 export interface ITime {
   hour: number;

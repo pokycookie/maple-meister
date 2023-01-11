@@ -1,28 +1,20 @@
 import "./navigator.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRight,
   faChartLine,
   faDatabase,
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
+import NavigatorIcon from "./navigatorIcon";
 
 function Navigator() {
   return (
     <div className="nav">
-      <div className="nav-icon-area">
-        <FontAwesomeIcon className="nav-icon" icon={faArrowRight} />
-      </div>
+      <NavigatorIcon icon={faArrowRight} />
       <div className="nav-divider"></div>
-      <div className="nav-icon-area">
-        <FontAwesomeIcon className="nav-icon" icon={faClock} />
-      </div>
-      <div className="nav-icon-area">
-        <FontAwesomeIcon className="nav-icon" icon={faChartLine} />
-      </div>
-      <div className="nav-icon-area">
-        <FontAwesomeIcon className="nav-icon" icon={faDatabase} />
-      </div>
+      <NavigatorIcon page="timer" icon={faClock} />
+      <NavigatorIcon page="ledger" icon={faChartLine} />
+      <NavigatorIcon icon={faDatabase} />
     </div>
   );
 }

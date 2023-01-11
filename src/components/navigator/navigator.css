@@ -21,10 +21,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  color: white;
+  cursor: pointer;
+}
+
+.nav-icon-area:hover {
+  color: #d28512;
+}
+
+.nav-icon-area.selected {
+  color: #d28512;
 }
 
 .nav-icon {
   font-size: 20px;
-  color: white;
-  cursor: pointer;
 }

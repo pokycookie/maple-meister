@@ -1,6 +1,6 @@
 import "./styles/app.scss";
-import TimerPage from "./pages/timer";
 import Navigator from "./components/navigator/navigator";
+import PageSwitcher from "./components/pageSwitcher/pageSwitcher";
 
 export default function App() {
   return (
@@ -9,9 +9,9 @@ export default function App() {
         <Navigator />
       </nav>
       <main>
-        <TimerPage />
+        <PageSwitcher />
       </main>
-      <button
+      {/* <button
         className="permissionBtn"
         onClick={() => {
           if (Notification.permission === "denied") {
@@ -20,7 +20,7 @@ export default function App() {
             alert("알림 권한이 허용되어 있습니다.");
           }
         }}
-      ></button>
+      ></button> */}
     </div>
   );
 }
