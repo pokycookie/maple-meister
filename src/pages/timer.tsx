@@ -6,6 +6,7 @@ import "../styles/pages/timer.scss";
 import { db } from "../db";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faList } from "@fortawesome/free-solid-svg-icons";
+import { Store } from "react-notifications-component";
 
 function TimerPage() {
   const [hour, setHour] = useState(0);
@@ -35,19 +36,59 @@ function TimerPage() {
         setStart(true);
         setPause(false);
       } else {
-        alert("시간을 설정해주세요.");
+        Store.addNotification({
+          message: `0초 이상으로 시간을 설정해주세요`,
+          type: "warning",
+          insert: "top",
+          container: "top-right",
+          dismiss: {
+            duration: 3000,
+          },
+        });
       }
     }
   };
 
   const presetAddHandler = () => {
-    try {
-      db.timer.add({
-        title: "",
-        time: timeToNumber({ hour, minute, second }),
+    if (time > 0) {
+      try {
+        db.timer.add({
+          title: "",
+          time: timeToNumber({ hour, minute, second }),
+        });
+        Store.addNotification({
+          title: `${getTimeText(timeToNumber({ hour, minute, second }))}`,
+          message: `타이머 프리셋이 저장되었습니다`,
+          type: "success",
+          insert: "top",
+          container: "top-right",
+          dismiss: {
+            duration: 3000,
+          },
+        });
+      } catch (err) {
+        console.error(err);
+        Store.addNotification({
+          title: "Error",
+          message: `타이머 프리셋을 저장하지 못했습니다`,
+          type: "danger",
+          insert: "top",
+          container: "top-right",
+          dismiss: {
+            duration: 3000,
+          },
+        });
+      }
+    } else {
+      Store.addNotification({
+        message: `0초 이상으로 시간을 설정해주세요`,
+        type: "warning",
+        insert: "top",
+        container: "top-right",
+        dismiss: {
+          duration: 3000,
+        },
       });
-    } catch (err) {
-      console.error(err);
     }
   };
 
