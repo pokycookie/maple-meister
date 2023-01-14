@@ -4,6 +4,8 @@ import { useInterval } from "../hooks";
 import TimePicker from "../components/timePicker/timePicker";
 import "../styles/pages/timer.scss";
 import { db } from "../db";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus, faList } from "@fortawesome/free-solid-svg-icons";
 
 function TimerPage() {
   const [hour, setHour] = useState(0);
@@ -38,19 +40,22 @@ function TimerPage() {
     }
   };
 
+  const presetAddHandler = () => {
+    try {
+      db.timer.add({
+        title: "",
+        time: timeToNumber({ hour, minute, second }),
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // Timer interval
   useInterval(subtractTime, start && !pause ? 1000 : null);
 
   useEffect(() => {
     setTime(timeToNumber({ hour, minute, second }));
-    // try {
-    //   db.timer.add({
-    //     title: "abc",
-    //     time: timeToNumber({ hour, minute, second }),
-    //   });
-    // } catch (err) {
-    //   console.error(err);
-    // }
   }, [hour, minute, second]);
 
   // Permission
@@ -62,37 +67,52 @@ function TimerPage() {
 
   return (
     <div className="timer-page">
-      <div className="indicator">
-        {start ? (
-          <p className={pause ? "pause" : ""}>{getTimeText(time)}</p>
-        ) : (
-          <>
-            <p className="time-number">{getDoubleDigit(hour)}</p>
-            <p>:</p>
-            <p className="time-number">{getDoubleDigit(minute)}</p>
-            <p>:</p>
-            <p className="time-number">{getDoubleDigit(second)}</p>
-          </>
+      <div className="timer-area">
+        <div className="indicator">
+          {start ? (
+            <p className={pause ? "pause" : ""}>{getTimeText(time)}</p>
+          ) : (
+            <>
+              <p className="time-number">{getDoubleDigit(hour)}</p>
+              <p>:</p>
+              <p className="time-number">{getDoubleDigit(minute)}</p>
+              <p>:</p>
+              <p className="time-number">{getDoubleDigit(second)}</p>
+            </>
+          )}
+        </div>
+        {start ? null : (
+          <TimePicker
+            default={{ hour, minute, second }}
+            onChange={(time) => {
+              setHour(time.hour);
+              setMinute(time.minute);
+              setSecond(time.second);
+            }}
+          />
         )}
+        <div className="controlArea">
+          {start ? (
+            <button onClick={() => setPause((prev) => (prev ? false : true))}>
+              {pause ? "start" : "pause"}
+            </button>
+          ) : null}
+          <button onClick={startHandler}>{start ? "stop" : "start"}</button>
+        </div>
       </div>
-      {start ? null : (
-        <TimePicker
-          default={{ hour, minute, second }}
-          onChange={(time) => {
-            setHour(time.hour);
-            setMinute(time.minute);
-            setSecond(time.second);
-          }}
-        />
-      )}
-      <div className="controlArea">
-        {start ? (
-          <button onClick={() => setPause((prev) => (prev ? false : true))}>
-            {pause ? "start" : "pause"}
-          </button>
-        ) : null}
-        <button onClick={startHandler}>{start ? "stop" : "start"}</button>
-      </div>
+      {!start ? (
+        <div className="preset-area">
+          <div className="preset-list-area"></div>
+          <div className="btn-area">
+            <button className="add-btn circleBtn" onClick={presetAddHandler}>
+              <FontAwesomeIcon icon={faPlus} />
+            </button>
+            <button className="preset-btn circleBtn">
+              <FontAwesomeIcon icon={faList} />
+            </button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -1,44 +1,74 @@
 .timer-page {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
 
-  .indicator {
-    user-select: none;
-    width: 100%;
+  .timer-area {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 80px;
-    font-weight: 600;
-    padding: 30px;
-    box-sizing: border-box;
-    color: #2c3333;
 
-    .time-number {
-      width: 110px;
-      text-align: center;
+    .indicator {
+      user-select: none;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 80px;
+      font-weight: 600;
+      padding: 30px;
+      box-sizing: border-box;
+      color: #2c3333;
+
+      .time-number {
+        width: 110px;
+        text-align: center;
+      }
+
+      .pause {
+        color: #eb4747;
+      }
     }
 
-    .pause {
-      color: #eb4747;
+    .sliderArea {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    .controlArea {
+      margin-top: 30px;
+      button {
+        margin: 0px 10px;
+        text-transform: uppercase;
+      }
     }
   }
 
-  .sliderArea {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    border-radius: 10px;
-  }
+  .preset-area {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
 
-  .controlArea {
-    margin-top: 30px;
-    button {
-      margin: 0px 10px;
-      text-transform: uppercase;
+    .btn-area {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .circleBtn {
+        width: 50px;
+        height: 50px;
+        border-radius: 100%;
+        font-size: 20px;
+        margin: 5px;
+      }
     }
   }
 }
