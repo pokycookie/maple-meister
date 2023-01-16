@@ -1,4 +1,3 @@
-import Wheel from "./wheel";
 import "./timePicker.css";
 import { useEffect, useState } from "react";
 import { ITime } from "../../types";
