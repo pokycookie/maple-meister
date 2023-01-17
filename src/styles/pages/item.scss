@@ -1,0 +1,58 @@
+.item-page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  .edit-area {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    .edit-select {
+      width: 300px;
+      margin-bottom: 10px;
+    }
+    .edit-input {
+      width: 300px;
+      height: 36px;
+      padding: 0px 10px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+      text-align: right;
+    }
+    .edit-btn {
+      width: 300px;
+    }
+  }
+
+  .btn-area {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    box-sizing: border-box;
+
+    input {
+      width: 245px;
+      height: 50px;
+      border: 2px solid #2c3333;
+      border-radius: 25px;
+      box-sizing: border-box;
+      padding: 0px 20px;
+      outline: none;
+      font-size: 16px;
+      transition: width 0.5s ease-in-out;
+
+      &:focus {
+        width: 400px;
+      }
+    }
+  }
+}

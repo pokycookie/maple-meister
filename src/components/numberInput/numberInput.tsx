@@ -3,10 +3,13 @@ import { useEffect, useState } from "react";
 interface IProps {
   onChange?: (value: number) => void;
   className?: string;
+  unit?: string;
+  separators?: boolean;
+  value: number;
 }
 
 function NumberInput(props: IProps) {
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(props.value);
 
   const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -15,11 +18,23 @@ function NumberInput(props: IProps) {
   };
 
   useEffect(() => {
+    setValue(props.value);
+  }, [props.value]);
+
+  useEffect(() => {
     if (props.onChange) props.onChange(value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
-  return <input className={props.className} value={value} onChange={changeHandler} />;
+  let inputText = props.separators ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : value;
+
+  return (
+    <input
+      className={props.className}
+      value={`${inputText} ${props.unit ?? ""}`}
+      onChange={changeHandler}
+    />
+  );
 }
 
 export default NumberInput;
