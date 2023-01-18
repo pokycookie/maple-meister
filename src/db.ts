@@ -15,13 +15,44 @@ export interface IDBItem {
 export interface IDBRecipe {
   id?: number;
   name: string;
-  items: number[];
+  items: IIngredient[];
+  resultCount: number;
+}
+
+export interface IIngredient {
+  id: number;
+  count: number;
+}
+
+export interface IDBItemLog {
+  id?: number;
+  item: number;
+  price: number;
+  updated: Date;
+}
+
+export interface IDBLedger {
+  id?: number;
+  item: number;
+  type: "buy" | "sell";
+  price: number;
+  count: number;
+  assets: number;
+  updated: Date;
+}
+
+export interface IDBUser {
+  key: string;
+  value: any;
 }
 
 export class MapleMeister extends Dexie {
   timer!: Table<IDBTimer>;
   item!: Table<IDBItem>;
   recipe!: Table<IDBRecipe>;
+  itemLog!: Table<IDBItemLog>;
+  ledger!: Table<IDBLedger>;
+  user!: Table<IDBUser>;
 
   constructor() {
     super("mapleMeister");
@@ -32,6 +63,9 @@ export class MapleMeister extends Dexie {
       timer: "++id, title, time",
       item: "++id, &name, price",
       recipe: "++id, &name, items",
+      itemLog: "++id, item, price, updated",
+      ledger: "++id, item, type, price, assets, updated",
+      user: "&key, value",
     });
   }
 }

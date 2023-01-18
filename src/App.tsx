@@ -14,7 +14,12 @@ export default function App() {
       const itemList = await db.item.toArray();
       dispatch(RSetItemList(itemList));
     };
+    const initIDB = async () => {
+      const assets = await db.user.get({ key: "assets" });
+      if (!assets) await db.user.add({ key: "assets", value: 0 });
+    };
     setItemList();
+    initIDB();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
