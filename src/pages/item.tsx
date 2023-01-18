@@ -7,47 +7,66 @@ import { useEffect, useState } from "react";
 import { IDBItem, db } from "../db";
 import { Store } from "react-notifications-component";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { IReduxStore, RSetItemList } from "../redux";
 
 function ItemPage() {
-  const [itemList, setItemList] = useState<IDBItem[]>([]);
   const [item, setItem] = useState<number | null>(null);
   const [price, setPrice] = useState<number>(0);
   const [addItem, setAddItem] = useState<string>("");
 
+  const itemList = useSelector<IReduxStore, IDBItem[]>((state) => {
+    return state.itemList;
+  }, shallowEqual);
+
+  const dispatch = useDispatch();
+
   const refreshDB = async () => {
     const data = await db.item.toArray();
-    setItemList(data);
+    dispatch(RSetItemList(data));
   };
 
   const addHandler = () => {
     // setModalOpen((prev) => (prev ? false : true));
-    db.item
-      .add({ name: addItem, price: 0 })
-      .then(() => {
-        Store.addNotification({
-          title: `${addItem}`,
-          message: `새로운 아이템이 추가되었습니다`,
-          type: "success",
-          insert: "top",
-          container: "top-right",
-          dismiss: {
-            duration: 3000,
-          },
+    if (addItem.trim() !== "") {
+      db.item
+        .add({ name: addItem, price: 0 })
+        .then(() => {
+          Store.addNotification({
+            title: `${addItem}`,
+            message: `새로운 아이템이 추가되었습니다`,
+            type: "success",
+            insert: "top",
+            container: "top-right",
+            dismiss: {
+              duration: 3000,
+            },
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+          Store.addNotification({
+            title: "Error",
+            message: `새로운 아이템을 추가하지 못했습니다`,
+            type: "danger",
+            insert: "top",
+            container: "top-right",
+            dismiss: {
+              duration: 3000,
+            },
+          });
         });
-      })
-      .catch((err) => {
-        console.error(err);
-        Store.addNotification({
-          title: "Error",
-          message: `새로운 아이템을 추가하지 못했습니다`,
-          type: "danger",
-          insert: "top",
-          container: "top-right",
-          dismiss: {
-            duration: 3000,
-          },
-        });
+    } else {
+      Store.addNotification({
+        message: `아이템 이름을 작성해 주세요`,
+        type: "warning",
+        insert: "top",
+        container: "top-right",
+        dismiss: {
+          duration: 3000,
+        },
       });
+    }
     setAddItem("");
     refreshDB();
   };
