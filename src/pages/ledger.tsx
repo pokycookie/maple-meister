@@ -8,11 +8,13 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { IReduxStore, RSetItemList } from "../redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList } from "@fortawesome/free-solid-svg-icons";
+import Modal from "../components/modal/modal";
 
 function LedgerPage() {
   const [item, setItem] = useState<number | null>(null);
   const [price, setPrice] = useState<number>(0);
   const [count, setCount] = useState<number>(1);
+  const [modal, setModal] = useState<boolean>(false);
 
   const itemList = useSelector<IReduxStore, IDBItem[]>((state) => {
     return state.itemList;
@@ -105,7 +107,9 @@ function LedgerPage() {
     }
   };
 
-  const listHandler = () => {};
+  const listHandler = () => {
+    setModal(true);
+  };
 
   const sellHandler = async () => {
     await updateItem();
@@ -192,6 +196,7 @@ function LedgerPage() {
           <FontAwesomeIcon icon={faList} />
         </button>
       </div>
+      <Modal open={modal} onClick={() => setModal(false)}></Modal>
     </div>
   );
 }

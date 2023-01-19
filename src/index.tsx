@@ -7,6 +7,7 @@ import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import "./styles/index.scss";
 import { ReactNotifications } from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
+import { ModalArea } from "./components/modal/modal";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
@@ -14,6 +15,7 @@ root.render(
     <Provider store={redux}>
       <ReactNotifications />
       <App />
+      <ModalArea />
     </Provider>
   </React.StrictMode>
 );
