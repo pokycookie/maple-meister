@@ -16,10 +16,10 @@ function Navigator() {
       <div className="nav-divider"></div>
       <NavigatorIcon page="timer" icon={faClock} />
       <NavigatorIcon page="chart" icon={faChartLine} />
-      <NavigatorIcon page="ledger" icon={faRightLeft} />
-      <div className="nav-divider"></div>
-      <NavigatorIcon page="item" icon={faCube} />
       <NavigatorIcon page="recipe" icon={faScroll} />
+      <div className="nav-divider"></div>
+      <NavigatorIcon page="ledger" icon={faRightLeft} />
+      <NavigatorIcon page="item" icon={faCube} />
     </div>
   );
 }

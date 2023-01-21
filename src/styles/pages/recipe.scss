@@ -1,0 +1,72 @@
+.recipe__page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  .btn__area {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    box-sizing: border-box;
+  }
+}
+
+.recipe__add__modal {
+  width: 100%;
+  height: 100%;
+
+  .recipe--result__area {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  .recipe--ingredient__area {
+    width: 100%;
+    height: calc(100% - 180px);
+  }
+  .recipe--input__area {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  .recipe--btn__area {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .form--select {
+    flex: 1;
+    min-width: 200px;
+    margin-right: 10px;
+  }
+  .form--input {
+    width: 100px;
+    height: 36px;
+    padding: 0px 10px;
+    box-sizing: border-box;
+    text-align: right;
+  }
+  .form--btn {
+    width: 100px;
+    height: 36px;
+    margin-left: 10px;
+  }
+  .recipe__modal--seperator {
+    width: 100%;
+    border-bottom: 1px solid grey;
+  }
+}
