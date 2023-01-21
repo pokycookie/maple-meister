@@ -1,6 +1,6 @@
 import { configureStore, createAction, createReducer } from "@reduxjs/toolkit";
 import { TPage } from "./types";
-import { IDBItem, db } from "./db";
+import { IDBItem } from "./db";
 
 export interface IReduxStore {
   page: TPage;

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/pages/ledger.scss";
-import { IDBItem, db } from "../db";
+import { IDBItem, db, IDBLedger } from "../db";
 import Select, { SingleValue } from "react-select";
 import NumberInput from "../components/numberInput/numberInput";
 import { Store } from "react-notifications-component";
@@ -9,6 +9,8 @@ import { IReduxStore, RSetItemList } from "../redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList } from "@fortawesome/free-solid-svg-icons";
 import Modal from "../components/modal/modal";
+import LedgerList from "../components/ledgerList/ledgerList";
+import { checkDateEqual } from "../lib/time";
 
 function LedgerPage() {
   const [item, setItem] = useState<number | null>(null);
@@ -196,7 +198,39 @@ function LedgerPage() {
           <FontAwesomeIcon icon={faList} />
         </button>
       </div>
-      <Modal open={modal} onClick={() => setModal(false)}></Modal>
+      <Modal open={modal} onClick={() => setModal(false)} width="60%" height="70%">
+        <LedgerListContainer />
+      </Modal>
+    </div>
+  );
+}
+
+function LedgerListContainer() {
+  const [ledgerList, setLedgerList] = useState<IDBLedger[]>([]);
+
+  const getLedger = async () => {
+    const tmpLedgerList = await db.ledger.toArray();
+    setLedgerList(tmpLedgerList);
+  };
+
+  useEffect(() => {
+    getLedger();
+  }, []);
+
+  return (
+    <div className="ledger__list--container">
+      <ul className="ledger__list--ul">
+        {ledgerList.map((e, i, arr) => {
+          return (
+            <React.Fragment key={i}>
+              {(i === 0 || !checkDateEqual(e.updated, arr[i - 1].updated)) && (
+                <p className="ledger__list--seperator">{e.updated.toLocaleDateString()}</p>
+              )}
+              <LedgerList data={e} />
+            </React.Fragment>
+          );
+        })}
+      </ul>
     </div>
   );
 }

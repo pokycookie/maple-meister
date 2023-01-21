@@ -24,3 +24,18 @@ export function getTimeText(time: number) {
   const S = numberToTime(time).second || 0;
   return `${getDoubleDigit(H)}:${getDoubleDigit(M)}:${getDoubleDigit(S)}`;
 }
+
+export function getSimpeTimeText(time: Date) {
+  const H = time.getHours();
+  const M = time.getMinutes();
+  return `${getDoubleDigit(H)}:${getDoubleDigit(M)}`;
+}
+
+export function checkDateEqual(t1: Date, t2: Date) {
+  const year = t1.getFullYear() === t2.getFullYear();
+  const month = t1.getMonth() === t2.getMonth();
+  const date = t1.getDate() === t2.getDate();
+
+  if (year && month && date) return true;
+  else return false;
+}

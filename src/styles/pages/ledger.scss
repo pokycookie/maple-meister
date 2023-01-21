@@ -64,3 +64,16 @@
     box-sizing: border-box;
   }
 }
+
+.ledger__list--container {
+  .ledger__list--ul {
+    .ledger__list--seperator {
+      padding: 10px 5px;
+      font-size: 15px;
+      font-weight: 600;
+      color: grey;
+      border-bottom: 1px solid grey;
+      margin-bottom: 10px;
+    }
+  }
+}

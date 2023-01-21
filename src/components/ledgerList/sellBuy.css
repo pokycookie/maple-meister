@@ -1,0 +1,17 @@
+.sellBuy {
+  width: 30px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  color: white;
+  border-radius: 3px;
+}
+
+.sellBuy.sell {
+  background-color: #379237;
+}
+.sellBuy.buy {
+  background-color: #dc3535;
+}
