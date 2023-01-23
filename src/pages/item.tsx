@@ -154,7 +154,7 @@ function ItemPage() {
           options={options}
           isClearable={true}
           onChange={selectHandler}
-          maxMenuHeight={35 * 6}
+          maxMenuHeight={33 * 6}
         />
         <NumberInput
           className="edit-input"

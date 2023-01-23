@@ -16,6 +16,7 @@ export interface IDBRecipe {
   id?: number;
   name: string;
   items: IIngredient[];
+  resultItem: number;
   resultCount: number;
 }
 
@@ -62,7 +63,7 @@ export class MapleMeister extends Dexie {
     this.version(2).stores({
       timer: "++id, title, time",
       item: "++id, &name, price",
-      recipe: "++id, &name, items",
+      recipe: "++id, &name, items, resultItem, resultCount",
       itemLog: "++id, item, price, updated",
       ledger: "++id, item, type, price, assets, updated",
       user: "&key, value",
