@@ -212,7 +212,6 @@ function LedgerListContainer() {
   const getLedger = async () => {
     const tmpLedgerList = await db.ledger.toArray();
     setLedgerList(tmpLedgerList);
-    console.log(tmpLedgerList.length);
   };
 
   useEffect(() => {

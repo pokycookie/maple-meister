@@ -1,29 +1,144 @@
+import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Store } from "react-notifications-component";
-import { shallowEqual, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import Select, { SingleValue } from "react-select";
 import Modal from "../components/modal/modal";
 import NumberInput from "../components/numberInput/numberInput";
-import { db, IDBItem, IIngredient } from "../db";
-import { IReduxStore } from "../redux";
+import { db, IDBItem, IDBRecipe, IIngredient } from "../db";
+import { IReduxStore, RSetRecipeList } from "../redux";
 import "../styles/pages/recipe.scss";
-import { AnimatePresence, motion } from "framer-motion";
+
+type TModal = "ADD" | "DEL";
 
 function RecipePage() {
   const [modal, setModal] = useState<boolean>(false);
+  const [modalType, setModalType] = useState<TModal>("ADD");
+
+  const dispatch = useDispatch();
+
+  const refreshDB = async () => {
+    const data = await db.recipe.toArray();
+    dispatch(RSetRecipeList(data));
+  };
+
+  const addHandler = () => {
+    setModal(true);
+    setModalType("ADD");
+  };
+  const delHandler = () => {
+    setModal(true);
+    setModalType("DEL");
+  };
+
+  useEffect(() => {
+    refreshDB();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="recipe__page">
       <div className="btn__area">
-        <button className="add__btn circleBtn" onClick={() => setModal(true)}>
+        <button className="add__btn circleBtn" onClick={addHandler}>
           <FontAwesomeIcon icon={faPlus} />
         </button>
+        <button className="dlt__btn circleBtn" onClick={delHandler}>
+          <FontAwesomeIcon icon={faTrashAlt} />
+        </button>
       </div>
-      <Modal open={modal} width="70%" height="70%">
-        <RecipeAddModal setModal={setModal} />
-      </Modal>
+      {modalType === "ADD" ? (
+        <Modal open={modal} width="70%" height="70%">
+          <RecipeAddModal setModal={setModal} />
+        </Modal>
+      ) : (
+        <Modal open={modal} width="50%" height="300px" onClick={() => setModal(false)}>
+          <RecipeDelModal />
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+function RecipeDelModal() {
+  const [recipe, setRecipe] = useState<number | null>(null);
+
+  const recipeList = useSelector<IReduxStore, IDBRecipe[]>((state) => {
+    return state.recipeList;
+  }, shallowEqual);
+
+  const dispatch = useDispatch();
+
+  const refreshDB = async () => {
+    const data = await db.recipe.toArray();
+    dispatch(RSetRecipeList(data));
+  };
+
+  const itemHandler = (e: SingleValue<{ value: number; label: string }>) => {
+    if (e) setRecipe(e.value);
+    else setRecipe(null);
+  };
+
+  const delHandler = async () => {
+    if (recipe === null) {
+      Store.addNotification({
+        message: `삭제할 아이템을 선택해주세요`,
+        type: "warning",
+        insert: "top",
+        container: "top-right",
+        dismiss: {
+          duration: 3000,
+        },
+      });
+    } else {
+      db.recipe
+        .delete(recipe)
+        .then(() => {
+          Store.addNotification({
+            message: `레시피가 삭제 되었습니다`,
+            type: "success",
+            insert: "top",
+            container: "top-right",
+            dismiss: {
+              duration: 3000,
+            },
+          });
+          refreshDB();
+        })
+        .catch((err) => {
+          console.error(err);
+          Store.addNotification({
+            title: "Error",
+            message: `레시피를 삭제 하지 못했습니다`,
+            type: "danger",
+            insert: "top",
+            container: "top-right",
+            dismiss: {
+              duration: 3000,
+            },
+          });
+        });
+    }
+  };
+
+  const options = recipeList.map((e) => {
+    return { value: e.id!, label: e.name };
+  });
+
+  return (
+    <div className="recipe__del__modal">
+      <Select
+        className="form--select"
+        placeholder="삭제할 아이템을 선택하세요"
+        options={options}
+        isClearable={true}
+        onChange={itemHandler}
+        maxMenuHeight={33 * 6}
+      />
+      <button className="form--btn" onClick={delHandler}>
+        <FontAwesomeIcon icon={faTrashAlt} />
+      </button>
     </div>
   );
 }
@@ -43,6 +158,9 @@ function RecipeAddModal(props: IProps) {
   const [item, setItem] = useState<number | null>(null);
   const [count, setCount] = useState<number>(1);
   const [ingredients, setIngredients] = useState<IIngredientPlus[]>([]);
+
+  const dispatch = useDispatch();
+
   const itemList = useSelector<IReduxStore, IDBItem[]>((state) => {
     return state.itemList;
   }, shallowEqual);
@@ -50,6 +168,11 @@ function RecipeAddModal(props: IProps) {
   const options = itemList.map((e) => {
     return { value: e.id!, label: e.name };
   });
+
+  const refreshDB = async () => {
+    const data = await db.recipe.toArray();
+    dispatch(RSetRecipeList(data));
+  };
 
   const recipeSubmitHandler = () => {
     if (!resultItem) {
@@ -102,6 +225,7 @@ function RecipeAddModal(props: IProps) {
               duration: 3000,
             },
           });
+          refreshDB();
           props.setModal(false);
         })
         .catch((err) => {
@@ -160,9 +284,17 @@ function RecipeAddModal(props: IProps) {
     else setItem(null);
   };
 
-  const resultItemHandler = (e: SingleValue<{ value: number; label: string }>) => {
-    if (e) setResultItem(e.value);
-    else setResultItem(null);
+  const resultItemHandler = async (e: SingleValue<{ value: number; label: string }>) => {
+    if (e) {
+      const itemID = e.value;
+      const itemName = (await db.item.get(itemID))?.name ?? "";
+      setResultItem(itemID);
+      if (itemName !== "") {
+        setTitle(`${itemName} 제작 레시피`);
+      }
+    } else {
+      setResultItem(null);
+    }
   };
 
   return (

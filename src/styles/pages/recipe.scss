@@ -18,23 +18,48 @@
   }
 }
 
+.recipe__del__modal {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  .form--select {
+    flex: 1;
+    margin-right: 10px;
+  }
+
+  .form--btn {
+    width: 36px;
+    height: 36px;
+    transition: background-color 0.3s ease-in-out;
+
+    &:hover {
+      background-color: #dc3535;
+    }
+  }
+}
+
 .recipe__add__modal {
   width: 100%;
   height: 100%;
 
   .recipe--title__area {
     width: 100%;
-    height: 60px;
+    height: 40px;
     display: flex;
     justify-content: flex-end;
     align-items: center;
 
     .title__area--input {
       width: 100%;
-      height: 36px;
-      padding: 0px 10px;
+      height: 100%;
+      border: none;
       box-sizing: border-box;
       text-align: left;
+      font-size: 20px;
+      outline: none;
     }
   }
   .recipe--result__area {
