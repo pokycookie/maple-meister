@@ -11,6 +11,7 @@ import { faList } from "@fortawesome/free-solid-svg-icons";
 import Modal from "../components/modal/modal";
 import LedgerList from "../components/ledgerList/ledgerList";
 import { checkDateEqual } from "../lib/time";
+import { faFolderOpen } from "@fortawesome/free-regular-svg-icons";
 
 function LedgerPage() {
   const [item, setItem] = useState<number | null>(null);
@@ -211,6 +212,7 @@ function LedgerListContainer() {
   const getLedger = async () => {
     const tmpLedgerList = await db.ledger.toArray();
     setLedgerList(tmpLedgerList);
+    console.log(tmpLedgerList.length);
   };
 
   useEffect(() => {
@@ -219,6 +221,12 @@ function LedgerListContainer() {
 
   return (
     <div className="ledger__list--container">
+      {ledgerList.length !== 0 || (
+        <div className="ledger__list--empty">
+          <FontAwesomeIcon className="empty--icon" icon={faFolderOpen} />
+          <p className="empty--text">거래 목록이 존재하지 않습니다</p>
+        </div>
+      )}
       <ul className="ledger__list--ul">
         {ledgerList.map((e, i, arr) => {
           return (

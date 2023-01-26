@@ -173,6 +173,9 @@ function ItemPage() {
           placeholder="추가할 아이템을 입력하세요"
           value={addItem}
           onChange={textHandler}
+          onKeyDown={(e) => {
+            if (e.nativeEvent.key === "Enter") addHandler();
+          }}
         />
         <button className="add-btn circleBtn" onClick={addHandler}>
           <FontAwesomeIcon icon={faPlus} />

@@ -102,6 +102,7 @@ function RecipeAddModal(props: IProps) {
               duration: 3000,
             },
           });
+          props.setModal(false);
         })
         .catch((err) => {
           console.error(err);
@@ -159,9 +160,7 @@ function RecipeAddModal(props: IProps) {
     else setItem(null);
   };
 
-  const resultItemHandler = (
-    e: SingleValue<{ value: number; label: string }>
-  ) => {
+  const resultItemHandler = (e: SingleValue<{ value: number; label: string }>) => {
     if (e) setResultItem(e.value);
     else setResultItem(null);
   };
@@ -220,16 +219,14 @@ function RecipeAddModal(props: IProps) {
       <div className="recipe--ingredient__area">
         {ingredients.map((e, i) => {
           return (
-            <AnimatePresence>
-              <div
-                className="ingredient__list"
-                key={`${e.id}${i}`}
-                onClick={() => ingredientDltHandler(i)}
-              >
-                <p className="ingredient__list--name">{e.name}</p>
-                <p className="ingredient__list--count">{e.count}개</p>
-              </div>
-            </AnimatePresence>
+            <div
+              className="ingredient__list"
+              key={`${e.id}${i}`}
+              onClick={() => ingredientDltHandler(i)}
+            >
+              <p className="ingredient__list--name">{e.name}</p>
+              <p className="ingredient__list--count">{e.count}개</p>
+            </div>
           );
         })}
       </div>
@@ -238,10 +235,7 @@ function RecipeAddModal(props: IProps) {
         <button className="form--btn ok--btn" onClick={recipeSubmitHandler}>
           레시피 추가
         </button>
-        <button
-          className="form--btn cancel--btn"
-          onClick={() => props.setModal(false)}
-        >
+        <button className="form--btn cancel--btn" onClick={() => props.setModal(false)}>
           취소
         </button>
       </div>
