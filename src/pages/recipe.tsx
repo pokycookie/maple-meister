@@ -7,6 +7,7 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import Select, { SingleValue } from "react-select";
 import Modal from "../components/modal/modal";
 import NumberInput from "../components/numberInput/numberInput";
+import RecipeList from "../components/recipeList/recipeList";
 import { db, IDBItem, IDBRecipe, IIngredient } from "../db";
 import { IReduxStore, RSetRecipeList } from "../redux";
 import "../styles/pages/recipe.scss";
@@ -16,6 +17,10 @@ type TModal = "ADD" | "DEL";
 function RecipePage() {
   const [modal, setModal] = useState<boolean>(false);
   const [modalType, setModalType] = useState<TModal>("ADD");
+
+  const recipeList = useSelector<IReduxStore, IDBRecipe[]>((state) => {
+    return state.recipeList;
+  }, shallowEqual);
 
   const dispatch = useDispatch();
 
@@ -40,6 +45,11 @@ function RecipePage() {
 
   return (
     <div className="recipe__page">
+      <div className="recipe__ul">
+        {recipeList.map((data) => {
+          return <RecipeList data={data} key={data.id} />;
+        })}
+      </div>
       <div className="btn__area">
         <button className="add__btn circleBtn" onClick={addHandler}>
           <FontAwesomeIcon icon={faPlus} />
