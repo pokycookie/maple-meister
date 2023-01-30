@@ -8,15 +8,24 @@ import Select, { SingleValue } from "react-select";
 import Modal from "../components/modal/modal";
 import NumberInput from "../components/numberInput/numberInput";
 import RecipeList from "../components/recipeList/recipeList";
+import { useLiveQuery } from "dexie-react-hooks";
 import { db, IDBItem, IDBRecipe, IIngredient } from "../db";
 import { IReduxStore, RSetRecipeList } from "../redux";
 import "../styles/pages/recipe.scss";
 
 type TModal = "ADD" | "DEL";
 
+interface IRecipeData {
+  recipe: IDBRecipe;
+  cost: number;
+  price: number;
+}
+
 function RecipePage() {
   const [modal, setModal] = useState<boolean>(false);
   const [modalType, setModalType] = useState<TModal>("ADD");
+  // const [maxMargin, setMaxmargin] = useState<number>(0)
+  // const [minMargin, setMinmargin] = useState<number>(0)
 
   const recipeList = useSelector<IReduxStore, IDBRecipe[]>((state) => {
     return state.recipeList;
@@ -38,6 +47,42 @@ function RecipePage() {
     setModalType("DEL");
   };
 
+  const getPrice = async (data: IDBRecipe) => {
+    const resultPrice = (await db.item.get(data.resultItem))?.price ?? 0;
+    const resultCount = data.resultCount;
+    return resultPrice * resultCount;
+  };
+
+  const getCost = async (data: IDBRecipe) => {
+    const tmpCost = await data.items.reduce(async (acc, e) => {
+      const itemPrice = (await db.item.get(e.id))?.price ?? 0;
+      return (await acc) + itemPrice * e.count;
+    }, Promise.resolve(0));
+    return tmpCost;
+  };
+
+  const recipeData = useLiveQuery<IRecipeData[]>(async () => {
+    const tmpData = await Promise.all(
+      recipeList.map<Promise<IRecipeData>>(async (recipe) => {
+        return {
+          recipe,
+          cost: await getCost(recipe),
+          price: await getPrice(recipe),
+        };
+      })
+    );
+    tmpData.sort((a, b) => {
+      const marginA = a.price - a.cost;
+      const marginB = b.price - b.cost;
+      return marginB - marginA;
+    });
+    // if (tmpData.length > 0) {
+    //   setMaxmargin(tmpData[0].price - tmpData[0].cost)
+    //   setMinmargin(tmpData[-1].price - tmpData[-1].cost)
+    // }
+    return tmpData;
+  }, [recipeList]);
+
   useEffect(() => {
     refreshDB();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -46,8 +91,24 @@ function RecipePage() {
   return (
     <div className="recipe__page">
       <div className="recipe__ul">
-        {recipeList.map((data) => {
-          return <RecipeList data={data} key={data.id} />;
+        {recipeData?.map((data, i, arr) => {
+          const margin = data.price - data.cost;
+          const positive = margin > 0 ? true : false;
+          const value =
+            arr.length > 0
+              ? positive
+                ? arr[0].price - arr[0].cost
+                : arr[arr.length - 1].price - arr[arr.length - 1].cost
+              : 0;
+          return (
+            <RecipeList
+              name={data.recipe.name}
+              price={data.price}
+              cost={data.cost}
+              key={data.recipe.id}
+              ratio={{ positive, value }}
+            />
+          );
         })}
       </div>
       <div className="btn__area">
@@ -63,7 +124,12 @@ function RecipePage() {
           <RecipeAddModal setModal={setModal} />
         </Modal>
       ) : (
-        <Modal open={modal} width="50%" height="300px" onClick={() => setModal(false)}>
+        <Modal
+          open={modal}
+          width="50%"
+          height="300px"
+          onClick={() => setModal(false)}
+        >
           <RecipeDelModal />
         </Modal>
       )}
@@ -294,7 +360,9 @@ function RecipeAddModal(props: IProps) {
     else setItem(null);
   };
 
-  const resultItemHandler = async (e: SingleValue<{ value: number; label: string }>) => {
+  const resultItemHandler = async (
+    e: SingleValue<{ value: number; label: string }>
+  ) => {
     if (e) {
       const itemID = e.value;
       const itemName = (await db.item.get(itemID))?.name ?? "";
@@ -377,7 +445,10 @@ function RecipeAddModal(props: IProps) {
         <button className="form--btn ok--btn" onClick={recipeSubmitHandler}>
           레시피 추가
         </button>
-        <button className="form--btn cancel--btn" onClick={() => props.setModal(false)}>
+        <button
+          className="form--btn cancel--btn"
+          onClick={() => props.setModal(false)}
+        >
           취소
         </button>
       </div>
