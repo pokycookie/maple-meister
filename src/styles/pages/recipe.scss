@@ -7,6 +7,17 @@
   align-items: center;
   position: relative;
 
+  .recipe__ul {
+    width: 70%;
+    height: 300px;
+    box-sizing: border-box;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid grey;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
   .btn__area {
     position: absolute;
     right: 20px;
