@@ -2,7 +2,6 @@ import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-import { Store } from "react-notifications-component";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import Select, { SingleValue } from "react-select";
 import Modal from "../components/modal/modal";
@@ -12,6 +11,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db, IDBItem, IDBRecipe, IIngredient } from "../db";
 import { IReduxStore, RSetRecipeList } from "../redux";
 import "../styles/pages/recipe.scss";
+import { Noti } from "../lib/notification";
 
 type TModal = "ADD" | "DEL";
 
@@ -124,12 +124,7 @@ function RecipePage() {
           <RecipeAddModal setModal={setModal} />
         </Modal>
       ) : (
-        <Modal
-          open={modal}
-          width="50%"
-          height="300px"
-          onClick={() => setModal(false)}
-        >
+        <Modal open={modal} width="50%" height="300px" onClick={() => setModal(false)}>
           <RecipeDelModal />
         </Modal>
       )}
@@ -158,42 +153,17 @@ function RecipeDelModal() {
 
   const delHandler = async () => {
     if (recipe === null) {
-      Store.addNotification({
-        message: `삭제할 아이템을 선택해주세요`,
-        type: "warning",
-        insert: "top",
-        container: "top-right",
-        dismiss: {
-          duration: 3000,
-        },
-      });
+      Noti.warning("삭제할 아이템을 선택해주세요");
     } else {
       db.recipe
         .delete(recipe)
         .then(() => {
-          Store.addNotification({
-            message: `레시피가 삭제 되었습니다`,
-            type: "success",
-            insert: "top",
-            container: "top-right",
-            dismiss: {
-              duration: 3000,
-            },
-          });
+          Noti.success("레시피가 삭제 되었습니다");
           refreshDB();
         })
         .catch((err) => {
           console.error(err);
-          Store.addNotification({
-            title: "Error",
-            message: `레시피를 삭제 하지 못했습니다`,
-            type: "danger",
-            insert: "top",
-            container: "top-right",
-            dismiss: {
-              duration: 3000,
-            },
-          });
+          Noti.danger("레시피를 삭제하지 못했습니다");
         });
     }
   };
@@ -251,39 +221,10 @@ function RecipeAddModal(props: IProps) {
   };
 
   const recipeSubmitHandler = () => {
-    if (!resultItem) {
-      Store.addNotification({
-        message: `결과 아이템을 선택해주세요`,
-        type: "warning",
-        insert: "top",
-        container: "top-right",
-        dismiss: {
-          duration: 3000,
-        },
-      });
-    }
-    if (resultCount < 1) {
-      Store.addNotification({
-        message: `개수를 1개 이상으로 설정해주세요`,
-        type: "warning",
-        insert: "top",
-        container: "top-right",
-        dismiss: {
-          duration: 3000,
-        },
-      });
-    }
-    if (title.trim() === "") {
-      Store.addNotification({
-        message: `레시피 이름을 설정해주세요`,
-        type: "warning",
-        insert: "top",
-        container: "top-right",
-        dismiss: {
-          duration: 3000,
-        },
-      });
-    }
+    if (!resultItem) Noti.warning("결과 아이템을 선택해주세요");
+    if (resultCount < 1) Noti.warning("개수를 1개 이상으로 설정해주세요");
+    if (title.trim() === "") Noti.warning("레시피 이름을 설정해주세요");
+
     if (resultItem && resultCount > 0 && title.trim() !== "") {
       const items: IIngredient[] = ingredients.map((e) => {
         return { id: e.id, count: e.count };
@@ -291,31 +232,13 @@ function RecipeAddModal(props: IProps) {
       db.recipe
         .add({ name: title, resultItem, resultCount, items })
         .then(() => {
-          Store.addNotification({
-            title: `${title}`,
-            message: `새로운 레시피가 추가되었습니다`,
-            type: "success",
-            insert: "top",
-            container: "top-right",
-            dismiss: {
-              duration: 3000,
-            },
-          });
+          Noti.success(`${title}가 새로운 레시피로 추가되었습니다.`);
           refreshDB();
           props.setModal(false);
         })
         .catch((err) => {
           console.error(err);
-          Store.addNotification({
-            title: "Error",
-            message: `새로운 레시피를 추가하지 못했습니다`,
-            type: "danger",
-            insert: "top",
-            container: "top-right",
-            dismiss: {
-              duration: 3000,
-            },
-          });
+          Noti.danger("새로운 레시피를 추가하지 못했습니다");
         });
     }
   };
@@ -327,28 +250,8 @@ function RecipeAddModal(props: IProps) {
   };
 
   const ingredientAddHandler = async () => {
-    if (!item) {
-      Store.addNotification({
-        message: `아이템을 선택해주세요`,
-        type: "warning",
-        insert: "top",
-        container: "top-right",
-        dismiss: {
-          duration: 3000,
-        },
-      });
-    }
-    if (count < 1) {
-      Store.addNotification({
-        message: `개수를 1개 이상으로 설정해주세요`,
-        type: "warning",
-        insert: "top",
-        container: "top-right",
-        dismiss: {
-          duration: 3000,
-        },
-      });
-    }
+    if (!item) Noti.warning("아이템을 선택해주세요");
+    if (count < 1) Noti.warning("개수를 1개 이상으로 설정해주세요");
     if (item && count > 0) {
       const name = (await db.item.get(item))?.name ?? "";
       setIngredients((prev) => [...prev, { id: item, count, name }]);
@@ -360,9 +263,7 @@ function RecipeAddModal(props: IProps) {
     else setItem(null);
   };
 
-  const resultItemHandler = async (
-    e: SingleValue<{ value: number; label: string }>
-  ) => {
+  const resultItemHandler = async (e: SingleValue<{ value: number; label: string }>) => {
     if (e) {
       const itemID = e.value;
       const itemName = (await db.item.get(itemID))?.name ?? "";
@@ -445,10 +346,7 @@ function RecipeAddModal(props: IProps) {
         <button className="form--btn ok--btn" onClick={recipeSubmitHandler}>
           레시피 추가
         </button>
-        <button
-          className="form--btn cancel--btn"
-          onClick={() => props.setModal(false)}
-        >
+        <button className="form--btn cancel--btn" onClick={() => props.setModal(false)}>
           취소
         </button>
       </div>

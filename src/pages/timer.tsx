@@ -5,10 +5,10 @@ import "../styles/pages/timer.scss";
 import { db } from "../db";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faList } from "@fortawesome/free-solid-svg-icons";
-import { Store } from "react-notifications-component";
 import { IDBTimer } from "../db";
 import { getDoubleDigit, getTimeText, numberToTime, timeToNumber } from "../lib/time";
 import TimerList from "../components/timerList/timerList";
+import { Noti } from "../lib/notification";
 
 function TimerPage() {
   // Timer set time
@@ -58,15 +58,7 @@ function TimerPage() {
         setStart(true);
         setPause(false);
       } else {
-        Store.addNotification({
-          message: `0초 이상으로 시간을 설정해주세요`,
-          type: "warning",
-          insert: "top",
-          container: "top-right",
-          dismiss: {
-            duration: 3000,
-          },
-        });
+        Noti.warning("0초 이상으로 시간을 설정해주세요");
       }
     }
   };
@@ -83,39 +75,13 @@ function TimerPage() {
           title: "",
           time: timeToNumber({ hour, minute, second }),
         });
-        Store.addNotification({
-          title: `${getTimeText(timeToNumber({ hour, minute, second }))}`,
-          message: `타이머 프리셋이 저장되었습니다`,
-          type: "success",
-          insert: "top",
-          container: "top-right",
-          dismiss: {
-            duration: 3000,
-          },
-        });
+        Noti.success("타이머 프리셋이 저장되었습니다");
       } catch (err) {
         console.error(err);
-        Store.addNotification({
-          title: "Error",
-          message: `타이머 프리셋을 저장하지 못했습니다`,
-          type: "danger",
-          insert: "top",
-          container: "top-right",
-          dismiss: {
-            duration: 3000,
-          },
-        });
+        Noti.danger("타이머 프리셋을 저장하지 못했습니다");
       }
     } else {
-      Store.addNotification({
-        message: `0초 이상으로 시간을 설정해주세요`,
-        type: "warning",
-        insert: "top",
-        container: "top-right",
-        dismiss: {
-          duration: 3000,
-        },
-      });
+      Noti.warning("0초 이상으로 시간을 설정해주세요");
     }
   };
 

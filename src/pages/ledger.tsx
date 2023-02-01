@@ -3,7 +3,6 @@ import "../styles/pages/ledger.scss";
 import { IDBItem, db, IDBLedger } from "../db";
 import Select, { SingleValue } from "react-select";
 import NumberInput from "../components/numberInput/numberInput";
-import { Store } from "react-notifications-component";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { IReduxStore, RSetItemList } from "../redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,6 +11,7 @@ import Modal from "../components/modal/modal";
 import LedgerList from "../components/ledgerList/ledgerList";
 import { checkDateEqual } from "../lib/time";
 import { faFolderOpen } from "@fortawesome/free-regular-svg-icons";
+import { Noti } from "../lib/notification";
 
 function LedgerPage() {
   const [item, setItem] = useState<number | null>(null);
@@ -37,28 +37,11 @@ function LedgerPage() {
     await db.item
       .update(item, { price })
       .then(() => {
-        Store.addNotification({
-          message: `아이템 가격이 업데이트 되었습니다`,
-          type: "success",
-          insert: "top",
-          container: "top-right",
-          dismiss: {
-            duration: 3000,
-          },
-        });
+        Noti.success("아이템 가격이 업데이트 되었습니다");
       })
       .catch((err) => {
         console.error(err);
-        Store.addNotification({
-          title: "Error",
-          message: `가격을 업데이트 하지 못했습니다`,
-          type: "danger",
-          insert: "top",
-          container: "top-right",
-          dismiss: {
-            duration: 3000,
-          },
-        });
+        Noti.danger("가격을 업데이트 하지 못했습니다");
       });
   };
 
@@ -74,39 +57,14 @@ function LedgerPage() {
       await db.ledger
         .add({ item, price, count, type, updated: new Date(), assets })
         .then(() => {
-          Store.addNotification({
-            message: `장부가 업데이트 되었습니다`,
-            type: "success",
-            insert: "top",
-            container: "top-right",
-            dismiss: {
-              duration: 3000,
-            },
-          });
+          Noti.success("장부가 업데이트 되었습니다");
         })
         .catch((err) => {
           console.error(err);
-          Store.addNotification({
-            title: "Error",
-            message: `장부를 업데이트 하지 못했습니다`,
-            type: "danger",
-            insert: "top",
-            container: "top-right",
-            dismiss: {
-              duration: 3000,
-            },
-          });
+          Noti.danger("장부를 업데이트 하지 못했습니다");
         });
     } else {
-      Store.addNotification({
-        message: `아이템을 선택해주세요`,
-        type: "warning",
-        insert: "top",
-        container: "top-right",
-        dismiss: {
-          duration: 3000,
-        },
-      });
+      Noti.warning("아이템을 선택해주세요");
     }
   };
 
