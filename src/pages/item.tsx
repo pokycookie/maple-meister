@@ -12,6 +12,7 @@ import { Noti } from "../lib/notification";
 import Modal from "../components/modal/modal";
 import { checkDateEqual } from "../lib/time";
 import ItemLogList from "../components/itemLogList/itemLogList";
+import EasyInput from "../components/easyInput/easyInput";
 
 function ItemPage() {
   const [item, setItem] = useState<number | null>(null);
@@ -121,6 +122,7 @@ function ItemPage() {
           separators
           onChange={(value) => priceHandler(value)}
         />
+        <EasyInput onChange={(value) => setPrice((prev) => prev + value)} />
         <button className="edit-btn" onClick={editHandler}>
           <FontAwesomeIcon icon={faPenToSquare} />
         </button>

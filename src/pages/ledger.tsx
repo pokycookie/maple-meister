@@ -12,6 +12,7 @@ import LedgerList from "../components/ledgerList/ledgerList";
 import { checkDateEqual } from "../lib/time";
 import { faFolderOpen } from "@fortawesome/free-regular-svg-icons";
 import { Noti } from "../lib/notification";
+import EasyInput from "../components/easyInput/easyInput";
 
 function LedgerPage() {
   const [item, setItem] = useState<number | null>(null);
@@ -143,6 +144,7 @@ function LedgerPage() {
             onChange={(value) => countHandler(value)}
           />
         </div>
+        <EasyInput onChange={(value) => setPrice((prev) => prev + value)} />
         <div className="btn-area">
           <button className="sell-btn" onClick={sellHandler}>
             판매
