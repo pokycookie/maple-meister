@@ -6,7 +6,7 @@ import "./itemLogList.css";
 
 interface IProps {
   data: IDBItemLog;
-  //   diff: number;
+  diff: number;
 }
 
 function ItemLogList(props: IProps) {
@@ -29,10 +29,10 @@ function ItemLogList(props: IProps) {
       </div>
       <div className="item__log__list--right">
         <p className="item__log__list--price">{decimalSeparator(props.data.price)}메소</p>
-        {/* <p className="item__log__list--assets">
+        <p className="item__log__list--assets">
           {props.diff < 0 ? "-" : "+"}
           {decimalSeparator(Math.abs(props.diff))}메소
-        </p> */}
+        </p>
       </div>
     </li>
   );

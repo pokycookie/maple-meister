@@ -149,12 +149,25 @@ function ItemPage() {
   );
 }
 
+interface IDBItemLogPrev extends IDBItemLog {
+  prevPrice: number;
+}
+
 function ItemLogModal() {
-  const [itemLog, setItemLog] = useState<IDBItemLog[]>([]);
+  const [itemLog, setItemLog] = useState<IDBItemLogPrev[]>([]);
 
   const getItemLog = async () => {
+    const prev: { [key: number]: number } = {};
     const tmpItemLog = await db.itemLog.toArray();
-    setItemLog(tmpItemLog);
+    const tmpItemLogPrev: IDBItemLogPrev[] = tmpItemLog.map((e) => {
+      let prevPrice = e.price;
+      if (prev.hasOwnProperty(e.item)) {
+        prevPrice = prev[e.item];
+      }
+      prev[e.item] = e.price;
+      return { id: e.id, item: e.item, price: e.price, updated: e.updated, prevPrice };
+    });
+    setItemLog(tmpItemLogPrev);
   };
 
   useEffect(() => {
@@ -176,7 +189,7 @@ function ItemLogModal() {
               {(i === 0 || !checkDateEqual(e.updated, arr[i - 1].updated)) && (
                 <p className="item__log--seperator">{e.updated.toLocaleDateString()}</p>
               )}
-              <ItemLogList data={e} />
+              <ItemLogList data={e} diff={e.price - e.prevPrice} />
             </React.Fragment>
           );
         })}
