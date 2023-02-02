@@ -1,19 +1,23 @@
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faFolderOpen, faList, faPlus } from "@fortawesome/free-solid-svg-icons";
 import "../styles/pages/item.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import NumberInput from "../components/numberInput/numberInput";
 import Select, { SingleValue } from "react-select";
-import { useEffect, useState } from "react";
-import { IDBItem, db } from "../db";
+import React, { useEffect, useState } from "react";
+import { IDBItem, db, IDBItemLog } from "../db";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { IReduxStore, RSetItemList } from "../redux";
 import { Noti } from "../lib/notification";
+import Modal from "../components/modal/modal";
+import { checkDateEqual } from "../lib/time";
+import ItemLogList from "../components/itemLogList/itemLogList";
 
 function ItemPage() {
   const [item, setItem] = useState<number | null>(null);
   const [price, setPrice] = useState<number>(0);
   const [addItem, setAddItem] = useState<string>("");
+  const [modal, setModal] = useState<boolean>(false);
 
   const itemList = useSelector<IReduxStore, IDBItem[]>((state) => {
     return state.itemList;
@@ -58,17 +62,21 @@ function ItemPage() {
     setAddItem(e.target.value);
   };
 
-  const editHandler = () => {
+  const editHandler = async () => {
     if (item) {
-      db.item
-        .update(item, { price })
-        .then(() => {
-          Noti.success("아이템 가격이 업데이트 되었습니다.");
-        })
-        .catch((err) => {
+      const lastPrice = (await db.item.get(item))?.price ?? 0;
+      if (lastPrice === price) {
+        Noti.warning("아이템 가격이 이전과 동일합니다");
+      } else {
+        try {
+          await db.item.update(item, { price });
+          await db.itemLog.add({ item, price, updated: new Date() });
+          Noti.success("아이템 가격이 업데이트 되었습니다");
+        } catch (err) {
           console.error(err);
           Noti.danger("가격을 업데이트 하지 못했습니다");
-        });
+        }
+      }
     } else {
       Noti.warning("아이템을 선택해주세요");
     }
@@ -130,7 +138,49 @@ function ItemPage() {
         <button className="add-btn circleBtn" onClick={addHandler}>
           <FontAwesomeIcon icon={faPlus} />
         </button>
+        <button className="list-btn circleBtn" onClick={() => setModal(true)}>
+          <FontAwesomeIcon icon={faList} />
+        </button>
       </div>
+      <Modal open={modal} onClick={() => setModal(false)} width="60%" height="70%" maxWidth="550px">
+        <ItemLogModal />
+      </Modal>
+    </div>
+  );
+}
+
+function ItemLogModal() {
+  const [itemLog, setItemLog] = useState<IDBItemLog[]>([]);
+
+  const getItemLog = async () => {
+    const tmpItemLog = await db.itemLog.toArray();
+    setItemLog(tmpItemLog);
+  };
+
+  useEffect(() => {
+    getItemLog();
+  }, []);
+
+  return (
+    <div className="item__log--container">
+      {itemLog.length !== 0 || (
+        <div className="item__log--empty">
+          <FontAwesomeIcon className="empty--icon" icon={faFolderOpen} />
+          <p className="empty--text">아이템 기록이 존재하지 않습니다</p>
+        </div>
+      )}
+      <ul className="item__log--ul">
+        {itemLog.map((e, i, arr) => {
+          return (
+            <React.Fragment key={i}>
+              {(i === 0 || !checkDateEqual(e.updated, arr[i - 1].updated)) && (
+                <p className="item__log--seperator">{e.updated.toLocaleDateString()}</p>
+              )}
+              <ItemLogList data={e} />
+            </React.Fragment>
+          );
+        })}
+      </ul>
     </div>
   );
 }

@@ -157,7 +157,7 @@ function LedgerPage() {
           <FontAwesomeIcon icon={faList} />
         </button>
       </div>
-      <Modal open={modal} onClick={() => setModal(false)} width="60%" height="70%">
+      <Modal open={modal} onClick={() => setModal(false)} width="60%" height="70%" maxWidth="550px">
         <LedgerListContainer />
       </Modal>
     </div>

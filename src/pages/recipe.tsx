@@ -120,11 +120,17 @@ function RecipePage() {
         </button>
       </div>
       {modalType === "ADD" ? (
-        <Modal open={modal} width="70%" height="70%">
+        <Modal open={modal} width="70%" height="70%" maxWidth="700px">
           <RecipeAddModal setModal={setModal} />
         </Modal>
       ) : (
-        <Modal open={modal} width="50%" height="300px" onClick={() => setModal(false)}>
+        <Modal
+          open={modal}
+          width="50%"
+          height="300px"
+          maxWidth="500px"
+          onClick={() => setModal(false)}
+        >
           <RecipeDelModal />
         </Modal>
       )}

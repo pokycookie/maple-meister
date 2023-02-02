@@ -18,6 +18,7 @@ function LedgerList(props: IProps) {
       setItem(tmpItem);
     };
     setItemName();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
