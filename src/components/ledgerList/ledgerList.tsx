@@ -29,7 +29,7 @@ function LedgerList(props: IProps) {
       </div>
       <div className="ledger__list--right">
         <p className="ledger__list--price">
-          {props.data.type === "buy" ? "-" : "+"}
+          {data.type === "buy" ? "-" : "+"}
           {decimalSeparator(data.price * data.count)}메소
         </p>
         <p className="ledger__list--assets">잔액 {decimalSeparator(data.assets)}메소</p>
