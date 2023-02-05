@@ -5,3 +5,8 @@ export interface ITime {
   minute: number;
   second: number;
 }
+
+export interface IWindow {
+  width: number;
+  height: number;
+}

@@ -1,4 +1,25 @@
 .chart__page {
-  width: 90%;
-  height: 500px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  position: relative;
+  box-sizing: border-box;
+  padding: 20px;
+
+  .filter__area {
+    width: 100%;
+    display: flex;
+
+    .filter--select {
+      width: 300px;
+    }
+  }
+
+  .chart__area {
+    width: calc(100vw - 110px);
+    height: 500px;
+  }
 }
