@@ -54,7 +54,9 @@ function LineChart(props: IProps) {
             className="nivo--line__chart--tooltip nivo--tooltip"
             style={{ color: e.point.serieColor }}
           >
-            <p className="x">{e.point.data.x.toLocaleString()}</p>
+            <p className="x" style={{ fontSize: "12px" }}>
+              {e.point.data.x.toLocaleString()}
+            </p>
             <p className="y">{e.point.data.yFormatted}메소</p>
           </div>
         );

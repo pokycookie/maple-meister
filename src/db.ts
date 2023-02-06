@@ -30,6 +30,7 @@ export interface IDBItemLog {
   item: number;
   price: number;
   updated: Date;
+  type?: "buy" | "sell";
 }
 
 export interface IDBLedger {
@@ -64,7 +65,7 @@ export class MapleMeister extends Dexie {
       timer: "++id, title, time",
       item: "++id, &name, price",
       recipe: "++id, &name, items, resultItem, resultCount",
-      itemLog: "++id, item, price, updated",
+      itemLog: "++id, item, price, updated, type",
       ledger: "++id, item, type, price, assets, updated",
       user: "&key, value",
     });

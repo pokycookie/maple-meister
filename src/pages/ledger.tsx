@@ -54,16 +54,15 @@ function LedgerPage() {
       } else {
         assets += price * count;
       }
-      await db.user.put({ key: "assets", value: assets });
-      await db.ledger
-        .add({ item, price, count, type, updated: new Date(), assets })
-        .then(() => {
-          Noti.success("장부가 업데이트 되었습니다");
-        })
-        .catch((err) => {
-          console.error(err);
-          Noti.danger("장부를 업데이트 하지 못했습니다");
-        });
+      try {
+        await db.user.put({ key: "assets", value: assets });
+        await db.ledger.add({ item, price, count, type, updated: new Date(), assets });
+        await db.itemLog.add({ item, price, updated: new Date(), type });
+        Noti.success("장부가 업데이트 되었습니다");
+      } catch (err) {
+        console.error(err);
+        Noti.danger("장부를 업데이트 하지 못했습니다");
+      }
     } else {
       Noti.warning("아이템을 선택해주세요");
     }

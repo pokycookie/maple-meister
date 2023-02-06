@@ -36,7 +36,7 @@ function PieChart(props: IProps) {
         return (
           <div className="nivo--pie__chart--tooltip nivo--tooltip" style={{ color: e.datum.color }}>
             <p className="id">{e.datum.id}</p>
-            <p className="value">{e.datum.formattedValue}메소</p>
+            <p className="value">순수익: {e.datum.formattedValue}메소</p>
           </div>
         );
       }}
