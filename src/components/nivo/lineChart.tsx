@@ -13,7 +13,7 @@ function LineChart(props: IProps) {
   return (
     <ResponsiveLine
       data={props.data}
-      margin={{ top: 50, right: 50, bottom: 100, left: 150 }}
+      margin={{ top: 20, right: 70, bottom: 20, left: 100 }}
       xScale={{ type: "point" }}
       yScale={{
         type: "linear",
@@ -22,11 +22,7 @@ function LineChart(props: IProps) {
       }}
       yFormat=" >-,"
       areaBaselineValue={min}
-      axisBottom={{
-        tickSize: 5,
-        tickPadding: 5,
-        tickRotation: -25,
-      }}
+      axisBottom={null}
       axisLeft={{
         tickSize: 5,
         tickPadding: 5,
@@ -51,6 +47,18 @@ function LineChart(props: IProps) {
       enableGridX={false}
       fill={[{ match: "*", id: "gradient1" }]}
       curve={"catmullRom"}
+      useMesh={true}
+      tooltip={(e) => {
+        return (
+          <div
+            className="nivo--line__chart--tooltip nivo--tooltip"
+            style={{ color: e.point.serieColor }}
+          >
+            <p className="x">{e.point.data.x.toLocaleString()}</p>
+            <p className="y">{e.point.data.yFormatted}메소</p>
+          </div>
+        );
+      }}
     />
   );
 }

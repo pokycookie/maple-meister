@@ -7,6 +7,10 @@
   align-items: center;
   position: relative;
 
+  .chart__area {
+    width: 100%;
+  }
+
   .recipe__ul {
     width: 70%;
     max-width: 700px;

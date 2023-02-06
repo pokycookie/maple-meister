@@ -1,7 +1,7 @@
 import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import Select, { SingleValue } from "react-select";
 import Modal from "../components/modal/modal";
@@ -12,10 +12,13 @@ import { db, IDBItem, IDBRecipe, IIngredient } from "../db";
 import { IReduxStore, RSetRecipeList } from "../redux";
 import "../styles/pages/recipe.scss";
 import { Noti } from "../lib/notification";
+import PieChart, { IPieData } from "../components/nivo/pieChart";
+import { recipeToPieData } from "../lib/nivo";
+import { ISize } from "../types";
 
 type TModal = "ADD" | "DEL";
 
-interface IRecipeData {
+export interface IRecipeData {
   recipe: IDBRecipe;
   cost: number;
   price: number;
@@ -24,8 +27,10 @@ interface IRecipeData {
 function RecipePage() {
   const [modal, setModal] = useState<boolean>(false);
   const [modalType, setModalType] = useState<TModal>("ADD");
-  // const [maxMargin, setMaxmargin] = useState<number>(0)
-  // const [minMargin, setMinmargin] = useState<number>(0)
+  const [pieData, setPieData] = useState<IPieData[]>([]);
+  const [chartSize, setChartSize] = useState<ISize>({ width: 10, height: 10 });
+
+  const EChartArea = useRef<HTMLDivElement>(null);
 
   const recipeList = useSelector<IReduxStore, IDBRecipe[]>((state) => {
     return state.recipeList;
@@ -45,6 +50,20 @@ function RecipePage() {
   const delHandler = () => {
     setModal(true);
     setModalType("DEL");
+  };
+
+  const resizeHandler = () => {
+    // const width = EChartArea.current?.clientWidth ?? 0;
+    // const height = EChartArea.current?.clientHeight ?? 0;
+    const navSize = 70;
+    const vw =
+      Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0) - navSize;
+    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+    const size = Math.min(vw, vh) / 2;
+    setChartSize({
+      width: size,
+      height: size,
+    });
   };
 
   const getPrice = async (data: IDBRecipe) => {
@@ -76,12 +95,25 @@ function RecipePage() {
       const marginB = b.price - b.cost;
       return marginB - marginA;
     });
-    // if (tmpData.length > 0) {
-    //   setMaxmargin(tmpData[0].price - tmpData[0].cost)
-    //   setMinmargin(tmpData[-1].price - tmpData[-1].cost)
-    // }
     return tmpData;
   }, [recipeList]);
+
+  useEffect(() => {
+    resizeHandler();
+    window.addEventListener("resize", resizeHandler);
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (recipeData !== undefined) {
+      const tmpData: IPieData[] = recipeToPieData(recipeData).filter((e) => e.value > 0);
+      setPieData(tmpData);
+    } else {
+      setPieData([]);
+    }
+  }, [recipeData]);
 
   useEffect(() => {
     refreshDB();
@@ -90,7 +122,14 @@ function RecipePage() {
 
   return (
     <div className="recipe__page">
-      <div className="recipe__ul">
+      <div
+        className="chart__area"
+        ref={EChartArea}
+        style={{ width: chartSize.width, height: chartSize.height }}
+      >
+        <PieChart data={pieData} />
+      </div>
+      {/* <div className="recipe__ul">
         {recipeData?.map((data, i, arr) => {
           const margin = data.price - data.cost;
           const positive = margin > 0 ? true : false;
@@ -110,7 +149,7 @@ function RecipePage() {
             />
           );
         })}
-      </div>
+      </div> */}
       <div className="btn__area">
         <button className="add__btn circleBtn" onClick={addHandler}>
           <FontAwesomeIcon icon={faPlus} />

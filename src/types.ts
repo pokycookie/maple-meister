@@ -6,7 +6,7 @@ export interface ITime {
   second: number;
 }
 
-export interface IWindow {
+export interface ISize {
   width: number;
   height: number;
 }

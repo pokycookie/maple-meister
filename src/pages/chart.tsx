@@ -1,3 +1,5 @@
+import { faFolderOpen } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Serie } from "@nivo/line";
 import { useEffect, useState } from "react";
 import { shallowEqual, useSelector } from "react-redux";
@@ -51,7 +53,14 @@ function ChartPage() {
         />
       </div>
       <div className="chart__area">
-        {data[0]?.data.length > 0 ? <LineChart data={data} /> : null}
+        {data[0]?.data.length > 0 ? (
+          <LineChart data={data} />
+        ) : (
+          <div className="chart--empty">
+            <FontAwesomeIcon className="empty--icon" icon={faFolderOpen} />
+            <p className="empty--text">데이터가 존재하지 않습니다</p>
+          </div>
+        )}
       </div>
     </div>
   );

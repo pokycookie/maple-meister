@@ -29,3 +29,14 @@ button.circleBtn {
 .invisible {
   display: none !important;
 }
+
+.nivo--tooltip {
+  background-color: #2c3333;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 14px;
+
+  P {
+    padding: 3px 0px;
+  }
+}
