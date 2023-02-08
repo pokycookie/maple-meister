@@ -16,8 +16,9 @@ export function itemLogToSerie(itemLogs: IDBItemLog[], id: string | number): Ser
 export function recipeToPieData(recipes: IRecipeData[]): IPieData[] {
   return recipes.map((recipe) => {
     return {
-      id: recipe.recipe.name,
+      id: recipe.recipe.id!,
       value: recipe.price - recipe.cost,
+      label: recipe.recipe.name,
     };
   });
 }

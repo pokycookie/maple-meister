@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import Modal from "../components/modal/modal";
 import { useLiveQuery } from "dexie-react-hooks";
-import { db, IDBRecipe } from "../db";
+import { db, IDBItem, IDBRecipe } from "../db";
 import { IReduxStore, RSetRecipeList } from "../redux";
 import "../styles/pages/recipe.scss";
 import PieChart, { IPieData } from "../components/nivo/pieChart";
@@ -13,6 +13,7 @@ import { recipeToPieData } from "../lib/nivo";
 import { ISize } from "../types";
 import RecipeAddModal from "../components/recipeModal/recipeAddModal";
 import RecipeDelModal from "../components/recipeModal/recipeDelModal";
+import { ComputedDatum } from "@nivo/pie";
 
 type TModal = "ADD" | "DEL";
 
@@ -22,11 +23,25 @@ export interface IRecipeData {
   price: number;
 }
 
+interface IDBIngredientMAX {
+  item: IDBItem;
+  count: number;
+}
+
+interface IDBRecipeMAX {
+  id: number;
+  name: string;
+  items: IDBIngredientMAX[];
+  resultItem: IDBItem;
+  resultCount: number;
+}
+
 function RecipePage() {
   const [modal, setModal] = useState<boolean>(false);
   const [modalType, setModalType] = useState<TModal>("ADD");
   const [pieData, setPieData] = useState<IPieData[]>([]);
   const [chartSize, setChartSize] = useState<ISize>({ width: 10, height: 10 });
+  const [controlData, setControlData] = useState<IDBRecipeMAX[]>([]);
 
   const EChartArea = useRef<HTMLDivElement>(null);
 
@@ -50,6 +65,11 @@ function RecipePage() {
     setModalType("DEL");
   };
 
+  const pieClickHandler = (data: ComputedDatum<IPieData>) => {
+    const selectedData = controlData.find((e) => e.id === data.id);
+    console.log(selectedData);
+  };
+
   const resizeHandler = () => {
     // const width = EChartArea.current?.clientWidth ?? 0;
     // const height = EChartArea.current?.clientHeight ?? 0;
@@ -62,6 +82,27 @@ function RecipePage() {
       width: size,
       height: size,
     });
+  };
+
+  const getRecipeMax = async (data: IDBRecipe[]) => {
+    const tmpRecipeMax: IDBRecipeMAX[] = [];
+    data.forEach(async (data) => {
+      const id = data.id!;
+      const name = data.name;
+      const items = await Promise.all(
+        data.items.map<Promise<IDBIngredientMAX>>(async (ingredient) => {
+          const item = (await db.item.get(ingredient.id))!;
+          return {
+            item,
+            count: ingredient.count,
+          };
+        })
+      );
+      const resultItem = (await db.item.get(data.resultItem))!;
+      const resultCount = data.resultCount;
+      tmpRecipeMax.push({ id, items, name, resultCount, resultItem });
+    });
+    return tmpRecipeMax;
   };
 
   const getPrice = async (data: IDBRecipe) => {
@@ -104,14 +145,47 @@ function RecipePage() {
     };
   }, []);
 
+  // Set PieData depends on recipeData
+  // useEffect(() => {
+  //   if (recipeData !== undefined) {
+  //     const tmpData: IPieData[] = recipeToPieData(recipeData).filter((e) => e.value > 0);
+  //     setPieData(tmpData);
+  //   } else {
+  //     setPieData([]);
+  //   }
+  // }, [recipeData]);
+
+  // Set PieData depends on controlData
   useEffect(() => {
-    if (recipeData !== undefined) {
-      const tmpData: IPieData[] = recipeToPieData(recipeData).filter((e) => e.value > 0);
-      setPieData(tmpData);
-    } else {
-      setPieData([]);
-    }
-  }, [recipeData]);
+    const tmpData: IPieData[] = controlData.map<IPieData>((recipe) => {
+      const price = recipe.resultItem.price * recipe.resultCount;
+      const cost = recipe.items.reduce((acc, curr) => {
+        return acc + curr.item.price * curr.count;
+      }, 0);
+      return {
+        id: recipe.id,
+        value: price - cost,
+        label: recipe.name,
+      };
+    });
+    console.log(tmpData);
+    setPieData(tmpData);
+  }, [controlData]);
+
+  // Get recipeMax data at first time
+  useEffect(() => {
+    const recipeMax = async () => {
+      const tmpControlData = await getRecipeMax(recipeList);
+      setControlData(tmpControlData);
+    };
+    if (controlData.length === 0) recipeMax();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recipeList]);
+
+  // for test
+  useEffect(() => {
+    console.log(controlData);
+  }, [controlData]);
 
   useEffect(() => {
     refreshDB();
@@ -125,7 +199,7 @@ function RecipePage() {
         ref={EChartArea}
         style={{ width: chartSize.width, height: chartSize.height }}
       >
-        <PieChart data={pieData} />
+        <PieChart data={pieData} onClick={(data) => pieClickHandler(data)} />
       </div>
       <div className="btn__area">
         <button className="add__btn circleBtn" onClick={addHandler}>
