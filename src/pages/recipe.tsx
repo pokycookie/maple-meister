@@ -75,8 +75,14 @@ function RecipePage() {
     // const height = EChartArea.current?.clientHeight ?? 0;
     const navSize = 70;
     const vw =
-      Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0) - navSize;
-    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+      Math.max(
+        document.documentElement.clientWidth || 0,
+        window.innerWidth || 0
+      ) - navSize;
+    const vh = Math.max(
+      document.documentElement.clientHeight || 0,
+      window.innerHeight || 0
+    );
     const size = Math.min(vw, vh) / 2;
     setChartSize({
       width: size,
@@ -85,24 +91,25 @@ function RecipePage() {
   };
 
   const getRecipeMax = async (data: IDBRecipe[]) => {
-    const tmpRecipeMax: IDBRecipeMAX[] = [];
-    data.forEach(async (data) => {
-      const id = data.id!;
-      const name = data.name;
-      const items = await Promise.all(
-        data.items.map<Promise<IDBIngredientMAX>>(async (ingredient) => {
-          const item = (await db.item.get(ingredient.id))!;
-          return {
-            item,
-            count: ingredient.count,
-          };
-        })
-      );
-      const resultItem = (await db.item.get(data.resultItem))!;
-      const resultCount = data.resultCount;
-      tmpRecipeMax.push({ id, items, name, resultCount, resultItem });
-    });
-    return tmpRecipeMax;
+    return await Promise.all(
+      data.map<Promise<IDBRecipeMAX>>(async (data) => {
+        return {
+          id: data.id!,
+          name: data.name,
+          items: await Promise.all(
+            data.items.map<Promise<IDBIngredientMAX>>(async (ingredient) => {
+              const item = (await db.item.get(ingredient.id))!;
+              return {
+                item,
+                count: ingredient.count,
+              };
+            })
+          ),
+          resultItem: (await db.item.get(data.resultItem))!,
+          resultCount: data.resultCount,
+        };
+      })
+    );
   };
 
   const getPrice = async (data: IDBRecipe) => {
@@ -168,24 +175,19 @@ function RecipePage() {
         label: recipe.name,
       };
     });
-    console.log(tmpData);
     setPieData(tmpData);
   }, [controlData]);
 
+  const recipeMax = async () => {
+    const tmpControlData = await getRecipeMax(recipeList);
+    setControlData(tmpControlData);
+  };
+
   // Get recipeMax data at first time
   useEffect(() => {
-    const recipeMax = async () => {
-      const tmpControlData = await getRecipeMax(recipeList);
-      setControlData(tmpControlData);
-    };
     if (controlData.length === 0) recipeMax();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipeList]);
-
-  // for test
-  useEffect(() => {
-    console.log(controlData);
-  }, [controlData]);
 
   useEffect(() => {
     refreshDB();
