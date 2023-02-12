@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import ReactDOM from "react-dom";
 import "./modal.css";
 import { AnimatePresence, motion } from "framer-motion";
@@ -33,8 +32,6 @@ function Modal(props: IProps) {
     default:
       alignItems = "center";
   }
-
-  useEffect(() => {});
 
   const width = props.width;
   const height = props.height;

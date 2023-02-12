@@ -22,7 +22,7 @@ function MMDFReader(props: IProps) {
 
   return (
     <input
-      className="file__reader"
+      className="mmdf__reader"
       type="file"
       accept=".mmdf"
       onChange={readerHandler}
