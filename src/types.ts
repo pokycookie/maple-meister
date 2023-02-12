@@ -6,7 +6,7 @@ export type TPage =
   | "chart"
   | "setting";
 
-export type TFile = "backup";
+export type TFile = "backup" | "recipe" | "item" | "setting";
 
 export interface ITime {
   hour: number;

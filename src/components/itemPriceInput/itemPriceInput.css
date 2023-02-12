@@ -1,0 +1,24 @@
+.item__price__input {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.item__price__input--select {
+  width: 300px;
+  margin-bottom: 10px;
+}
+
+.item__price__input--input {
+  width: 300px;
+  height: 36px;
+  padding: 0px 10px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+  text-align: right;
+}
+
+.item__price__input--btn {
+  width: 300px;
+}
