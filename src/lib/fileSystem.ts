@@ -18,19 +18,28 @@ export function download(data: any, type: TFile) {
 }
 
 export function upload() {
-  const LINK = document.createElement("input");
-  LINK.type = "file";
-  LINK.accept = ".txt";
-  LINK.addEventListener("change", () => {
-    if (LINK.files && LINK.files.length > 0) {
-      const FILE = LINK.files[0];
-      const reader = new FileReader();
-      reader.readAsText(FILE);
-      reader.onload = () => {
-        const obj = JSON.parse(reader.result as string);
-        console.log(obj);
-      };
-    }
+  return new Promise<any>((resolve, rejects) => {
+    const LINK = document.createElement("input");
+    LINK.type = "file";
+    LINK.accept = ".txt";
+    LINK.addEventListener("change", () => {
+      if (LINK.files && LINK.files.length > 0) {
+        try {
+          const FILE = LINK.files[0];
+          const READER = new FileReader();
+          READER.readAsText(FILE);
+          READER.onload = () => {
+            document.body.removeChild(LINK);
+            const obj = JSON.parse(READER.result as string);
+            resolve(obj);
+          };
+        } catch (error) {
+          rejects(error);
+        }
+      } else {
+        rejects();
+      }
+    });
+    LINK.click();
   });
-  LINK.click();
 }
