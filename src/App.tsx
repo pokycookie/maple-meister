@@ -28,7 +28,7 @@ export default function App() {
       <nav>
         <Navigator />
       </nav>
-      <main>
+      <main id="main">
         <PageSwitcher />
       </main>
       {/* <button
