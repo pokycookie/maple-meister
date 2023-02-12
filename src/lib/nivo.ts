@@ -1,9 +1,12 @@
 import { Datum, Serie } from "@nivo/line";
 import { IPieData } from "../components/nivo/pieChart";
 import { IDBItemLog } from "../db";
-import { IRecipeData } from "../pages/recipe";
+import { IDBRecipeExtend } from "../pages/recipe";
 
-export function itemLogToSerie(itemLogs: IDBItemLog[], id: string | number): Serie[] {
+export function itemLogToSerie(
+  itemLogs: IDBItemLog[],
+  id: string | number
+): Serie[] {
   const data: Datum[] = itemLogs.map((log) => {
     return {
       x: log.updated.toLocaleString(),
@@ -13,12 +16,12 @@ export function itemLogToSerie(itemLogs: IDBItemLog[], id: string | number): Ser
   return [{ id, data }];
 }
 
-export function recipeToPieData(recipes: IRecipeData[]): IPieData[] {
+export function recipeToPieData(recipes: IDBRecipeExtend[]): IPieData[] {
   return recipes.map((recipe) => {
     return {
-      id: recipe.recipe.id!,
+      id: recipe.id!,
       value: recipe.price - recipe.cost,
-      label: recipe.recipe.name,
+      label: recipe.name,
     };
   });
 }
