@@ -1,4 +1,12 @@
-export type TPage = "timer" | "ledger" | "item" | "recipe" | "chart";
+export type TPage =
+  | "timer"
+  | "ledger"
+  | "item"
+  | "recipe"
+  | "chart"
+  | "setting";
+
+export type TFile = "backup";
 
 export interface ITime {
   hour: number;

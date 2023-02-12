@@ -6,6 +6,7 @@ import ItemPage from "../../pages/item";
 import LedgerPage from "../../pages/ledger";
 import RecipePage from "../../pages/recipe";
 import ChartPage from "../../pages/chart";
+import SettingPage from "../../pages/setting";
 
 function PageSwitcher() {
   const page = useSelector<IReduxStore, TPage>((state) => {
@@ -33,6 +34,9 @@ function PageSwitcher() {
       </div>
       <div className={`page${invisible("chart")}`}>
         <ChartPage />
+      </div>
+      <div className={`page${invisible("setting")}`}>
+        <SettingPage />
       </div>
     </>
   );
