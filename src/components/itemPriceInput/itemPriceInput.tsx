@@ -1,4 +1,5 @@
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
+import { faRotate } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { shallowEqual, useSelector } from "react-redux";
@@ -13,6 +14,7 @@ import "./itemPriceInput.css";
 interface IProps {
   items: IDBItem[];
   onChange?: (item: number, price: number) => void;
+  refresh?: () => void;
 }
 
 function ItemPriceInput(props: IProps) {
@@ -66,9 +68,14 @@ function ItemPriceInput(props: IProps) {
         onChange={(value) => setPrice(value)}
       />
       <EasyInput onChange={(value) => setPrice((prev) => prev + value)} />
-      <button className="item__price__input--btn" onClick={editHandler}>
-        <FontAwesomeIcon icon={faPenToSquare} />
-      </button>
+      <div className="btn__area">
+        <button className="btn__area--refresh" onClick={props.refresh}>
+          <FontAwesomeIcon icon={faRotate} />
+        </button>
+        <button className="btn__area--submit" onClick={editHandler}>
+          <FontAwesomeIcon icon={faPenToSquare} />
+        </button>
+      </div>
     </div>
   );
 }

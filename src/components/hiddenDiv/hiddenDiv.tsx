@@ -17,6 +17,10 @@ function HiddenDiv(props: IProps) {
     return state.page;
   }, shallowEqual);
 
+  const backClickHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (e.target === e.currentTarget) setIsOpen(false);
+  };
+
   const btnHandler = () => {
     setIsOpen((prev) => (prev ? false : true));
   };
@@ -37,6 +41,7 @@ function HiddenDiv(props: IProps) {
       className={`hidden__div${invisible("recipe")}`}
       animate={isOpen ? "open" : "closed"}
       variants={variants}
+      onClick={backClickHandler}
     >
       <div className="hidden__div--container">
         <button className="hidden__div--btn" onClick={btnHandler}></button>

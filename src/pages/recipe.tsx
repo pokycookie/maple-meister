@@ -42,7 +42,7 @@ function RecipePage() {
   const [modalType, setModalType] = useState<TModal>("ADD");
   const [pieData, setPieData] = useState<IPieData[]>([]);
   const [chartSize, setChartSize] = useState<ISize>({ width: 10, height: 10 });
-  const [controlData, setControlData] = useState<IDBRecipeMAX[]>([]);
+  // const [controlData, setControlData] = useState<IDBRecipeMAX[]>([]);
   const [items, setItems] = useState<IDBItem[]>([]);
 
   const EChartArea = useRef<HTMLDivElement>(null);
@@ -77,14 +77,8 @@ function RecipePage() {
     // const height = EChartArea.current?.clientHeight ?? 0;
     const navSize = 70;
     const vw =
-      Math.max(
-        document.documentElement.clientWidth || 0,
-        window.innerWidth || 0
-      ) - navSize;
-    const vh = Math.max(
-      document.documentElement.clientHeight || 0,
-      window.innerHeight || 0
-    );
+      Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0) - navSize;
+    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
     const size = Math.min(vw, vh) / 2;
     setChartSize({
       width: size,
@@ -178,9 +172,7 @@ function RecipePage() {
   // Set PieData depends on recipeExtend
   useEffect(() => {
     if (recipeExtend !== undefined) {
-      const tmpData: IPieData[] = recipeToPieData(recipeExtend).filter(
-        (e) => e.value > 0
-      );
+      const tmpData: IPieData[] = recipeToPieData(recipeExtend).filter((e) => e.value > 0);
       setPieData(tmpData);
     } else {
       setPieData([]);
@@ -203,16 +195,16 @@ function RecipePage() {
   //   setPieData(tmpData);
   // }, [controlData]);
 
-  const recipeMax = async () => {
-    const tmpControlData = await getRecipeMax(recipeList);
-    setControlData(tmpControlData);
-  };
+  // const recipeMax = async () => {
+  //   const tmpControlData = await getRecipeMax(recipeList);
+  //   setControlData(tmpControlData);
+  // };
 
   // Get recipeMax data at first time
-  useEffect(() => {
-    if (controlData.length === 0) recipeMax();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [recipeList]);
+  // useEffect(() => {
+  //   if (controlData.length === 0) recipeMax();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [recipeList]);
 
   // Initialize
   useEffect(() => {
@@ -232,6 +224,7 @@ function RecipePage() {
         <HiddenDiv>
           <ItemPriceInput
             items={items}
+            refresh={initItems}
             onChange={(item, price) => itemHandler(item, price)}
           />
         </HiddenDiv>

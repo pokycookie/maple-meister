@@ -19,6 +19,17 @@
   text-align: right;
 }
 
-.item__price__input--btn {
-  width: 300px;
+.btn__area {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn__area--refresh {
+  width: 32px;
+}
+
+.btn__area--submit {
+  width: 260px;
 }
