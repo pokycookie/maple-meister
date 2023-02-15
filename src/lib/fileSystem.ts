@@ -1,16 +1,28 @@
-import { TFile } from "../types";
+import { IDBItem, IDBItemLog, IDBLedger, IDBRecipe } from "../db";
+import { getDateText } from "./time";
+
+export type TFile = "backup" | "recipe" | "item" | "itemLog" | "ledger" | "setting";
+
+interface IMMDF__prototype {
+  item?: IDBItem[];
+  recipe?: IDBRecipe[];
+  itemLog?: IDBItemLog[];
+  ledger?: IDBLedger[];
+}
+
+export interface IMMDF extends IMMDF__prototype {
+  backup?: IMMDF__prototype;
+}
 
 export function download(data: any, type: TFile) {
   const DATA = { meta: { type }, data };
-  const FILE = new File(
-    [JSON.stringify(DATA)],
-    `${new Date().toDateString()}.txt`,
-    { type: "text/plain" }
-  );
+  const FILE = new File([JSON.stringify(DATA)], `${new Date().toDateString()}.txt`, {
+    type: "text/plain",
+  });
   const URL = window.URL.createObjectURL(FILE);
   const LINK = document.createElement("a");
   LINK.href = URL;
-  LINK.download = `${new Date().toLocaleString().replace(/(\s*)/g, "")}.txt`;
+  LINK.download = `${getDateText(new Date())}${type}.mmdf`;
   document.body.appendChild(LINK);
   LINK.click();
   document.body.removeChild(LINK);

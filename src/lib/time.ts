@@ -39,3 +39,11 @@ export function checkDateEqual(t1: Date, t2: Date) {
   if (year && month && date) return true;
   else return false;
 }
+
+export function getDateText(time: Date) {
+  const hour = time.getFullYear();
+  const month = time.getMonth() + 1;
+  const date = time.getDate();
+
+  return `${getDoubleDigit(hour)}${getDoubleDigit(month)}${getDoubleDigit(date)}`;
+}
