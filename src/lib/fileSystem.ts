@@ -3,6 +3,10 @@ import { getDateText } from "./time";
 
 export type TFile = "backup" | "recipe" | "item" | "itemLog" | "ledger" | "setting";
 
+interface IMeta {
+  type: TFile;
+}
+
 interface IMMDF__prototype {
   item?: IDBItem[];
   recipe?: IDBRecipe[];
@@ -10,12 +14,17 @@ interface IMMDF__prototype {
   ledger?: IDBLedger[];
 }
 
-export interface IMMDF extends IMMDF__prototype {
+export interface IMMDF__data extends IMMDF__prototype {
   backup?: IMMDF__prototype;
 }
 
+export interface IMMDF {
+  meta: IMeta;
+  data: IMMDF__data;
+}
+
 export function download(data: any, type: TFile) {
-  const DATA = { meta: { type }, data };
+  const DATA: IMMDF = { meta: { type }, data };
   const FILE = new File([JSON.stringify(DATA)], `${new Date().toDateString()}.txt`, {
     type: "text/plain",
   });

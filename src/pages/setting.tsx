@@ -6,7 +6,7 @@ function SettingPage() {
   return (
     <div className="setting__page">
       <MMDFReader onChange={(data) => console.log(data)} />
-      <MMDFWriter type="backup" />
+      <MMDFWriter type="recipe" />
     </div>
   );
 }
