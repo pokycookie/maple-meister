@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import "./calendar.css";
 
 type TStatus = "prev" | "current" | "next";
-type TCalendar = "daily" | "weekly" | "monthly";
+export type TCalendar = "daily" | "weekly" | "monthly";
 
 interface ICalendar {
   value: number;
@@ -35,6 +35,12 @@ function Calendar(props: IProps) {
   const [weeklyArr, setWeeklyArr] = useState<ICalendar[][]>([]);
   const [monthlyArr, setMonthlyArr] = useState<ICalendar[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(defaultDate);
+
+  const setDateToday = () => {
+    const today = new Date();
+    setYear(today.getFullYear());
+    setMonth(today.getMonth());
+  };
 
   const monthHandler = (type: "inc" | "dec") => {
     const tmpMonth = type === "inc" ? month + 1 : month - 1;
@@ -184,7 +190,7 @@ function Calendar(props: IProps) {
             <FontAwesomeIcon icon={faAngleLeft} />
           </button>
         ) : null}
-        <button className="indicator">
+        <button className="indicator" onClick={setDateToday}>
           {defaultType !== "monthly" ? `${year}년 ${month + 1}월` : `${year}년`}
         </button>
         {defaultType !== "monthly" ? (

@@ -1,0 +1,55 @@
+.dropdown {
+  width: 300px;
+  position: relative;
+}
+
+.dropdown .dropdown--control {
+  width: 100%;
+  height: 38px;
+  border: 1px solid hsl(0, 0%, 80%);
+  border-radius: 4px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+}
+.dropdown .dropdown--control:hover {
+  border-color: hsl(0, 0%, 70%);
+}
+
+.dropdown .dropdown--control .divider {
+  width: 0px;
+  height: 20px;
+  border-left: 1px solid hsl(0, 0%, 80%);
+}
+
+.dropdown .dropdown--control .placeholder {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 5px 10px;
+  font-size: 14px;
+  color: hsl(0, 0%, 50%);
+}
+
+.dropdown .dropdown--control .open__btn {
+  width: 38px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: hsl(0, 0%, 80%);
+}
+
+.dropdown .dropdown--menu {
+  width: 100%;
+  margin: 7px 0px;
+  /* min-height: 40px;
+  border: 1px solid hsl(0, 0%, 80%);
+  border-radius: 4px; */
+  position: absolute;
+  overflow: hidden;
+}
