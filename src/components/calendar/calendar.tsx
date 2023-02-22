@@ -19,7 +19,7 @@ interface ICalendar {
 
 interface IProps {
   default?: Date;
-  onChange?: (start: Date, end?: Date) => void;
+  onChange?: (start: Date, end: Date) => void;
   type?: TCalendar;
 }
 
@@ -33,7 +33,7 @@ function Calendar(props: IProps) {
   const [month, setMonth] = useState<number>(defaultDate.getMonth());
   const [dailyArr, setDailyArr] = useState<ICalendar[]>([]);
   const [weeklyArr, setWeeklyArr] = useState<ICalendar[][]>([]);
-  const [monthlyArr, setMonthlyArr] = useState<number[]>([]);
+  const [monthlyArr, setMonthlyArr] = useState<ICalendar[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(defaultDate);
 
   const monthHandler = (type: "inc" | "dec") => {
@@ -49,21 +49,38 @@ function Calendar(props: IProps) {
     }
   };
 
+  const monthlyHandler = (data: ICalendar) => {
+    const year = data.date.getFullYear();
+    const month = data.date.getMonth();
+
+    const start = new Date(year, month, 1, 0, 0, 0);
+    const end = new Date(year, month + 1, 0, 23, 59, 59);
+
+    if (props.onChange) props.onChange(start, end);
+  };
+
   const weeklyHandler = (data: ICalendar) => {
     const year = data.date.getFullYear();
     const month = data.date.getMonth();
     const date = data.date.getDate();
     const day = data.date.getDay();
 
-    const start = new Date(year, month, date - day);
-    const end = new Date(year, month, date + (6 - day));
+    const start = new Date(year, month, date - day, 0, 0, 0);
+    const end = new Date(year, month, date + (6 - day), 23, 59, 59);
 
     if (props.onChange) props.onChange(start, end);
   };
 
   const tableHandler = (data: ICalendar) => {
+    const year = data.date.getFullYear();
+    const month = data.date.getMonth();
+    const date = data.date.getDate();
+
+    const start = new Date(year, month, date, 0, 0, 0);
+    const end = new Date(year, month, date, 23, 59, 59);
+
     setSelectedDate(data.date);
-    if (props.onChange) props.onChange(data.date);
+    if (props.onChange) props.onChange(start, end);
   };
 
   useEffect(() => {
@@ -132,7 +149,16 @@ function Calendar(props: IProps) {
       setWeeklyArr(tmpArrWeek);
     };
 
-    const getMonthly = () => {};
+    const getMonthly = () => {
+      const tmpArr: ICalendar[] = [];
+      for (let i = 1; i < 13; i++) {
+        const value = i;
+        const date = new Date(year, value - 1, 1);
+        const status: TStatus = "current";
+        tmpArr.push({ value, date, status });
+      }
+      setMonthlyArr(tmpArr);
+    };
 
     switch (defaultType) {
       case "daily":
@@ -153,24 +179,30 @@ function Calendar(props: IProps) {
         <button onClick={() => setYear((prev) => prev - 1)}>
           <FontAwesomeIcon icon={faAnglesLeft} />
         </button>
-        <button onClick={() => monthHandler("dec")}>
-          <FontAwesomeIcon icon={faAngleLeft} />
+        {defaultType !== "monthly" ? (
+          <button onClick={() => monthHandler("dec")}>
+            <FontAwesomeIcon icon={faAngleLeft} />
+          </button>
+        ) : null}
+        <button className="indicator">
+          {defaultType !== "monthly" ? `${year}년 ${month + 1}월` : `${year}년`}
         </button>
-        <button>
-          {year}년 {month + 1}월
-        </button>
-        <button onClick={() => monthHandler("inc")}>
-          <FontAwesomeIcon icon={faAngleRight} />
-        </button>
+        {defaultType !== "monthly" ? (
+          <button onClick={() => monthHandler("inc")}>
+            <FontAwesomeIcon icon={faAngleRight} />
+          </button>
+        ) : null}
         <button onClick={() => setYear((prev) => prev + 1)}>
           <FontAwesomeIcon icon={faAnglesRight} />
         </button>
       </div>
-      <div className="day">
-        {dayArr.map((element, index) => {
-          return <p key={index}>{element}</p>;
-        })}
-      </div>
+      {defaultType !== "monthly" ? (
+        <div className="day">
+          {dayArr.map((element, index) => {
+            return <p key={index}>{element}</p>;
+          })}
+        </div>
+      ) : null}
       <div className={`tableArea ${defaultType}`}>
         {defaultType === "daily"
           ? dailyArr.map((element, index) => {
@@ -208,7 +240,13 @@ function Calendar(props: IProps) {
                 </button>
               );
             })
-          : null}
+          : monthlyArr.map((e, i) => {
+              return (
+                <button key={i} onClick={() => monthlyHandler(e)}>
+                  {e.value}
+                </button>
+              );
+            })}
       </div>
     </div>
   );

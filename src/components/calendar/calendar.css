@@ -23,7 +23,7 @@
   background-color: #2c3333;
   color: white;
 }
-.navigation button:nth-child(3) {
+.navigation button.indicator {
   width: 100%;
   font-weight: 300;
 }
