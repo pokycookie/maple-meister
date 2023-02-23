@@ -1,0 +1,21 @@
+.toggle__btn {
+  display: flex;
+  align-items: center;
+  width: 60px;
+  height: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 3px 5px;
+}
+
+.toggle__btn--dot {
+  width: 30px;
+  height: 20px;
+  border-radius: 4px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+}
