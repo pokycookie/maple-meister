@@ -1,5 +1,5 @@
 import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faFolderOpen, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef, useState } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -68,8 +68,8 @@ function RecipePage() {
   };
 
   const pieClickHandler = (data: ComputedDatum<IPieData>) => {
-    const selectedData = recipeList.find((e) => e.id === data.id);
-    console.log(selectedData);
+    // const selectedData = recipeList.find((e) => e.id === data.id);
+    // console.log(selectedData);
   };
 
   const resizeHandler = () => {
@@ -220,14 +220,23 @@ function RecipePage() {
         ref={EChartArea}
         style={{ width: chartSize.width, height: chartSize.height }}
       >
-        <PieChart data={pieData} onClick={(data) => pieClickHandler(data)} />
-        <HiddenDiv>
-          <ItemPriceInput
-            items={items}
-            refresh={initItems}
-            onChange={(item, price) => itemHandler(item, price)}
-          />
-        </HiddenDiv>
+        {pieData.length > 0 ? (
+          <>
+            <PieChart data={pieData} onClick={(data) => pieClickHandler(data)} />
+            <HiddenDiv>
+              <ItemPriceInput
+                items={items}
+                refresh={initItems}
+                onChange={(item, price) => itemHandler(item, price)}
+              />
+            </HiddenDiv>
+          </>
+        ) : (
+          <div className="chart--empty">
+            <FontAwesomeIcon className="empty--icon" icon={faFolderOpen} />
+            <p className="empty--text">데이터가 존재하지 않습니다</p>
+          </div>
+        )}
       </div>
       <div className="btn__area">
         <button className="add__btn circleBtn" onClick={addHandler}>

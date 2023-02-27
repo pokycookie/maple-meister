@@ -48,6 +48,7 @@ function LineChart(props: IProps) {
       fill={[{ match: "*", id: "gradient1" }]}
       curve={"catmullRom"}
       useMesh={true}
+      animate={false}
       tooltip={(e) => {
         return (
           <div
