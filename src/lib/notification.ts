@@ -26,7 +26,7 @@ export class Noti {
   static danger(message: string) {
     Store.addNotification({
       title: "Error",
-      message: `가격을 업데이트 하지 못했습니다`,
+      message,
       type: "danger",
       insert: "top",
       container: "top-right",
