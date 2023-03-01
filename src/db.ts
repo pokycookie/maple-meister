@@ -65,11 +65,13 @@ export class MapleMeister extends Dexie {
       timer: "++id, title, time",
       item: "++id, &name, price",
       recipe: "++id, &name, items, resultItem, resultCount",
-      itemLog: "++id, item, price, updated, type",
+      itemLog: "++id, [item+updated], price, type",
       ledger: "++id, item, type, price, assets, updated",
       user: "&key, value",
     });
   }
 }
+
+// 2개 이상의 인덱싱을 하기 위해 compound index를 사용 ex) [item+updated]
 
 export const db = new MapleMeister();
