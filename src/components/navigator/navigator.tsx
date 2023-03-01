@@ -23,9 +23,7 @@ function Navigator() {
         <NavigatorIcon page="ledger" icon={faRightLeft} />
         <NavigatorIcon page="item" icon={faCube} />
       </div>
-      <div className="bottom">
-        <NavigatorIcon page="setting" icon={faGear} />
-      </div>
+      <div className="bottom">{/* <NavigatorIcon page="setting" icon={faGear} /> */}</div>
     </div>
   );
 }
