@@ -17,24 +17,11 @@ import { ComputedDatum } from "@nivo/pie";
 import ItemPriceInput from "../components/itemPriceInput/itemPriceInput";
 import HiddenDiv from "../components/hiddenDiv/hiddenDiv";
 
-type TModal = "ADD" | "DEL";
+type TModal = "ADD" | "DEL" | "PIE";
 
 export interface IDBRecipeExtend extends IDBRecipe {
   cost: number;
   price: number;
-}
-
-interface IDBIngredientMAX {
-  item: IDBItem;
-  count: number;
-}
-
-interface IDBRecipeMAX {
-  id: number;
-  name: string;
-  items: IDBIngredientMAX[];
-  resultItem: IDBItem;
-  resultCount: number;
 }
 
 function RecipePage() {
@@ -42,7 +29,6 @@ function RecipePage() {
   const [modalType, setModalType] = useState<TModal>("ADD");
   const [pieData, setPieData] = useState<IPieData[]>([]);
   const [chartSize, setChartSize] = useState<ISize>({ width: 10, height: 10 });
-  // const [controlData, setControlData] = useState<IDBRecipeMAX[]>([]);
   const [items, setItems] = useState<IDBItem[]>([]);
 
   const EChartArea = useRef<HTMLDivElement>(null);
@@ -58,23 +44,18 @@ function RecipePage() {
     dispatch(RSetRecipeList(data));
   };
 
-  const addHandler = () => {
+  const modalHandler = (type: TModal) => {
     setModal(true);
-    setModalType("ADD");
-  };
-  const delHandler = () => {
-    setModal(true);
-    setModalType("DEL");
+    setModalType(type);
   };
 
   const pieClickHandler = (data: ComputedDatum<IPieData>) => {
+    modalHandler("PIE");
     // const selectedData = recipeList.find((e) => e.id === data.id);
     // console.log(selectedData);
   };
 
   const resizeHandler = () => {
-    // const width = EChartArea.current?.clientWidth ?? 0;
-    // const height = EChartArea.current?.clientHeight ?? 0;
     const navSize = 70;
     const vw =
       Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0) - navSize;
@@ -92,28 +73,6 @@ function RecipePage() {
     setItems(prevItems);
   };
 
-  const getRecipeMax = async (data: IDBRecipe[]) => {
-    return await Promise.all(
-      data.map<Promise<IDBRecipeMAX>>(async (data) => {
-        return {
-          id: data.id!,
-          name: data.name,
-          items: await Promise.all(
-            data.items.map<Promise<IDBIngredientMAX>>(async (ingredient) => {
-              const item = (await db.item.get(ingredient.id))!;
-              return {
-                item,
-                count: ingredient.count,
-              };
-            })
-          ),
-          resultItem: (await db.item.get(data.resultItem))!,
-          resultCount: data.resultCount,
-        };
-      })
-    );
-  };
-
   const initItems = async () => {
     const tmpItems = await db.item.toArray();
     setItems(tmpItems);
@@ -124,17 +83,12 @@ function RecipePage() {
   };
 
   const getPrice = (data: IDBRecipe) => {
-    // const resultPrice = (await db.item.get(data.resultItem))?.price ?? 0;
     const resultPrice = getItemPrice(data.resultItem);
     const resultCount = data.resultCount;
     return resultPrice * resultCount;
   };
 
   const getCost = (data: IDBRecipe) => {
-    // const tmpCost = await data.items.reduce(async (acc, e) => {
-    //   const itemPrice = (await db.item.get(e.id))?.price ?? 0;
-    //   return (await acc) + itemPrice * e.count;
-    // }, Promise.resolve(0));
     const tmpCost = data.items.reduce((acc, curr) => {
       return acc + getItemPrice(curr.id) * curr.count;
     }, 0);
@@ -179,33 +133,6 @@ function RecipePage() {
     }
   }, [recipeExtend]);
 
-  // Set PieData depends on controlData
-  // useEffect(() => {
-  //   const tmpData: IPieData[] = controlData.map<IPieData>((recipe) => {
-  //     const price = recipe.resultItem.price * recipe.resultCount;
-  //     const cost = recipe.items.reduce((acc, curr) => {
-  //       return acc + curr.item.price * curr.count;
-  //     }, 0);
-  //     return {
-  //       id: recipe.id,
-  //       value: price - cost,
-  //       label: recipe.name,
-  //     };
-  //   });
-  //   setPieData(tmpData);
-  // }, [controlData]);
-
-  // const recipeMax = async () => {
-  //   const tmpControlData = await getRecipeMax(recipeList);
-  //   setControlData(tmpControlData);
-  // };
-
-  // Get recipeMax data at first time
-  // useEffect(() => {
-  //   if (controlData.length === 0) recipeMax();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [recipeList]);
-
   // Initialize
   useEffect(() => {
     refreshDB();
@@ -221,28 +148,26 @@ function RecipePage() {
         style={{ width: chartSize.width, height: chartSize.height }}
       >
         {pieData.length > 0 ? (
-          <>
-            <PieChart data={pieData} onClick={(data) => pieClickHandler(data)} />
-            <HiddenDiv>
-              <ItemPriceInput
-                items={items}
-                refresh={initItems}
-                onChange={(item, price) => itemHandler(item, price)}
-              />
-            </HiddenDiv>
-          </>
+          <PieChart data={pieData} onClick={(data) => pieClickHandler(data)} />
         ) : (
           <div className="chart--empty">
             <FontAwesomeIcon className="empty--icon" icon={faFolderOpen} />
             <p className="empty--text">데이터가 존재하지 않습니다</p>
           </div>
         )}
+        <HiddenDiv>
+          <ItemPriceInput
+            items={items}
+            refresh={initItems}
+            onChange={(item, price) => itemHandler(item, price)}
+          />
+        </HiddenDiv>
       </div>
       <div className="btn__area">
-        <button className="add__btn circleBtn" onClick={addHandler}>
+        <button className="add__btn circleBtn" onClick={() => modalHandler("ADD")}>
           <FontAwesomeIcon icon={faPlus} />
         </button>
-        <button className="dlt__btn circleBtn" onClick={delHandler}>
+        <button className="dlt__btn circleBtn" onClick={() => modalHandler("DEL")}>
           <FontAwesomeIcon icon={faTrashAlt} />
         </button>
       </div>
