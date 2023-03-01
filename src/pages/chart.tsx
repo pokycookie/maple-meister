@@ -8,8 +8,9 @@ import Calendar, { TCalendar } from "../components/calendar/calendar";
 import Dropdown from "../components/dropdown/dropdown";
 import LineChart from "../components/nivo/lineChart";
 import RowSelector from "../components/rowSelector/rowSelector";
-import { db, IDBItem } from "../db";
+import { db, IDBItem, IDBItemLog } from "../db";
 import { itemLogToSerie } from "../lib/nivo";
+import { checkDateEqual2, getNearDate } from "../lib/time";
 import { IReduxStore } from "../redux";
 import "../styles/pages/chart.scss";
 
@@ -40,18 +41,64 @@ function ChartPage() {
   });
 
   useEffect(() => {
+    setDateFilter(getNearDate(dateFilter.start, calendarType));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [calendarType]);
+
+  useEffect(() => {
     const getSerieData = async () => {
       if (item !== null) {
         const itemName = (await db.item.get(item))?.name ?? "";
-        const itemLogs = await db.itemLog.where("item").equals(item).toArray();
-        const serieData = itemLogToSerie(itemLogs, itemName);
+        const itemLogs = await db.itemLog
+          .where(["item", "updated"])
+          .between([item, dateFilter.start], [item, dateFilter.end], true, true)
+          .sortBy("updated");
+        if (itemLogs.length === 0) {
+          const serieData = itemLogToSerie(itemLogs, itemName);
+          setData(serieData);
+          return;
+        }
+        const editedLogs: IDBItemLog[] = [];
+        let tmpUpdated = itemLogs[0].updated;
+        const overlap: { [key: number]: number } = {};
+        switch (calendarType) {
+          case "daily":
+            itemLogs.forEach((e, i) => {
+              if (checkDateEqual2(e.updated, tmpUpdated, "seconds") && i !== 0) {
+                editedLogs[editedLogs.length - 1].price += e.price;
+                overlap[editedLogs.length - 1] = 1 + (overlap[editedLogs.length - 1] ?? 1);
+              } else {
+                editedLogs.push(e);
+                tmpUpdated = e.updated;
+              }
+            });
+            break;
+          case "weekly":
+          case "monthly":
+            itemLogs.forEach((e, i) => {
+              if (checkDateEqual2(e.updated, tmpUpdated, "date") && i !== 0) {
+                editedLogs[editedLogs.length - 1].price += e.price;
+                overlap[editedLogs.length - 1] = 1 + (overlap[editedLogs.length - 1] ?? 1);
+              } else {
+                editedLogs.push(e);
+                tmpUpdated = e.updated;
+              }
+            });
+            break;
+        }
+        // Make Average
+        Object.keys(overlap).forEach((key) => {
+          const index = parseInt(key);
+          editedLogs[index].price = Math.round(editedLogs[index].price / overlap[index]);
+        });
+        const serieData = itemLogToSerie(editedLogs, itemName);
         setData(serieData);
       } else {
         setData([]);
       }
     };
     getSerieData();
-  }, [item]);
+  }, [item, dateFilter, calendarType]);
 
   return (
     <div className="chart__page">
@@ -72,6 +119,7 @@ function ChartPage() {
             onChange={(value) => setCalendarType(value)}
           />
           <Dropdown
+            className="dropdown"
             value={`${dateFilter.start.toLocaleDateString()} - ${dateFilter.end.toLocaleDateString()}`}
           >
             <Calendar

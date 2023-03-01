@@ -6,6 +6,7 @@ import "./dropdown.css";
 interface IProps {
   children?: ReactNode;
   value: string | number;
+  className?: string;
 }
 
 function Dropdown(props: IProps) {
@@ -33,7 +34,7 @@ function Dropdown(props: IProps) {
   }, [isOpen]);
 
   return (
-    <div className="dropdown" ref={EDropdown} onClick={openHandler}>
+    <div className={`dropdown ${props.className ?? ""}`} ref={EDropdown} onClick={openHandler}>
       <div className="dropdown--control">
         <div className="placeholder">{props.value}</div>
         <div className="divider"></div>

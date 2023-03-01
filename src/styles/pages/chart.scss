@@ -9,30 +9,98 @@
   box-sizing: border-box;
   padding: 20px;
 
-  .filter__area {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-
-    .filter__area--left {
+  @media screen and (min-width: 1000px) {
+    .filter__area {
+      width: 100%;
       display: flex;
-      justify-content: flex-start;
+      justify-content: space-between;
       align-items: center;
-    }
-    .filter__area--right {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
+      margin-bottom: 20px;
 
-      .row__selector {
-        margin-right: 10px;
+      .filter__area--left {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+      }
+      .filter__area--right {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        .row__selector {
+          margin-right: 10px;
+        }
+      }
+
+      .filter--select {
+        width: 300px;
       }
     }
+  }
 
-    .filter--select {
-      width: 300px;
+  @media screen and (min-width: 600px) {
+    .filter__area {
+      width: 100%;
+      margin-bottom: 20px;
+
+      .filter__area--left {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-bottom: 10px;
+
+        .filter--select {
+          width: 100%;
+        }
+      }
+
+      .filter__area--right {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        .dropdown {
+          width: 100%;
+        }
+
+        .row__selector {
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    .filter__area {
+      width: 100%;
+      margin-bottom: 20px;
+
+      .filter__area--left {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-bottom: 10px;
+
+        .filter--select {
+          width: 100%;
+        }
+      }
+
+      .filter__area--right {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+
+        .row__selector {
+          width: 100%;
+          margin-bottom: 10px;
+        }
+
+        .dropdown {
+          width: 100%;
+        }
+      }
     }
   }
 
