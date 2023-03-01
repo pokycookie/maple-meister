@@ -1,3 +1,4 @@
+import { TCalendar } from "../components/calendar/calendar";
 import { ITime } from "../types";
 
 export function getDoubleDigit(value: number) {
@@ -40,10 +41,68 @@ export function checkDateEqual(t1: Date, t2: Date) {
   else return false;
 }
 
+type TDate = "year" | "month" | "date" | "hours" | "minutes" | "seconds";
+export function checkDateEqual2(t1: Date, t2: Date, type: TDate) {
+  const year = t1.getFullYear() === t2.getFullYear();
+  const month = t1.getMonth() === t2.getMonth();
+  const date = t1.getDate() === t2.getDate();
+  const hours = t1.getHours() === t2.getHours();
+  const minutes = t1.getMinutes() === t2.getMinutes();
+  const seconds = t1.getSeconds() === t2.getSeconds();
+
+  switch (type) {
+    case "year":
+      if (year) return true;
+      else return false;
+    case "month":
+      if (year && month) return true;
+      else return false;
+    case "date":
+      if (year && month && date) return true;
+      else return false;
+    case "hours":
+      if (year && month && date && hours) return true;
+      else return false;
+    case "minutes":
+      if (year && month && date && hours && minutes) return true;
+      else return false;
+    case "seconds":
+      if (year && month && date && hours && minutes && seconds) return true;
+      else return false;
+  }
+}
+
 export function getDateText(time: Date) {
   const hour = time.getFullYear();
   const month = time.getMonth() + 1;
   const date = time.getDate();
 
   return `${getDoubleDigit(hour)}${getDoubleDigit(month)}${getDoubleDigit(date)}`;
+}
+
+export function getNearDate(time: Date, type: TCalendar) {
+  const year = time.getFullYear();
+  const month = time.getMonth();
+  const date = time.getDate();
+  const day = time.getDay();
+  const lastDate = new Date(year, month + 1, 0).getDate();
+
+  let start;
+  let end;
+
+  switch (type) {
+    case "daily":
+      start = new Date(year, month, date, 0, 0, 0);
+      end = new Date(year, month, date, 23, 59, 59);
+      break;
+    case "weekly":
+      start = new Date(year, month, date - day, 0, 0, 0);
+      end = new Date(year, month, date - day + 6, 23, 59, 59);
+      break;
+    case "monthly":
+      start = new Date(year, month, 1, 0, 0, 0);
+      end = new Date(year, month, lastDate, 23, 59, 59);
+      break;
+  }
+  return { start, end };
 }
