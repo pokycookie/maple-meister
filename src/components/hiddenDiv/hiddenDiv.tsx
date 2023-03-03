@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { motion } from "framer-motion";
 import "./hiddenDiv.css";
@@ -8,6 +8,7 @@ import { TPage } from "../../types";
 
 interface IProps {
   children?: ReactNode;
+  onChange?: (isOpen: boolean) => void;
 }
 
 function HiddenDiv(props: IProps) {
@@ -29,6 +30,11 @@ function HiddenDiv(props: IProps) {
     if (page === p) return "";
     else return " invisible";
   };
+
+  useEffect(() => {
+    if (props.onChange) props.onChange(isOpen);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   const variants = {
     open: { y: 0 },

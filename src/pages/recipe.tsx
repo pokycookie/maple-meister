@@ -16,6 +16,7 @@ import RecipeDelModal from "../components/recipeModal/recipeDelModal";
 import { ComputedDatum } from "@nivo/pie";
 import ItemPriceInput from "../components/itemPriceInput/itemPriceInput";
 import HiddenDiv from "../components/hiddenDiv/hiddenDiv";
+import RecipePieModal from "../components/recipeModal/recipePieModal";
 
 type TModal = "ADD" | "DEL" | "PIE";
 
@@ -29,7 +30,8 @@ function RecipePage() {
   const [modalType, setModalType] = useState<TModal>("ADD");
   const [pieData, setPieData] = useState<IPieData[]>([]);
   const [chartSize, setChartSize] = useState<ISize>({ width: 10, height: 10 });
-  const [items, setItems] = useState<IDBItem[]>([]);
+  const [editedItems, setEditedItems] = useState<IDBItem[]>([]);
+  const [editMode, setEditMode] = useState(false);
 
   const EChartArea = useRef<HTMLDivElement>(null);
 
@@ -68,52 +70,39 @@ function RecipePage() {
   };
 
   const itemHandler = (item: number, price: number) => {
-    const prevItems = [...items];
+    const prevItems = [...editedItems];
     prevItems[prevItems.findIndex((e) => e.id === item)].price = price;
-    setItems(prevItems);
+    setEditedItems(prevItems);
   };
 
   const initItems = async () => {
     const tmpItems = await db.item.toArray();
-    setItems(tmpItems);
-  };
-
-  const getItemPrice = (id: number) => {
-    return items.find((e) => e.id === id)?.price ?? 0;
-  };
-
-  const getPrice = (data: IDBRecipe) => {
-    const resultPrice = getItemPrice(data.resultItem);
-    const resultCount = data.resultCount;
-    return resultPrice * resultCount;
-  };
-
-  const getCost = (data: IDBRecipe) => {
-    const tmpCost = data.items.reduce((acc, curr) => {
-      return acc + getItemPrice(curr.id) * curr.count;
-    }, 0);
-    return tmpCost;
+    setEditedItems(tmpItems);
   };
 
   const recipeExtend = useLiveQuery<IDBRecipeExtend[]>(() => {
-    const tmpData = recipeList.map((recipe) => {
-      return {
-        id: recipe.id,
-        items: recipe.items,
-        name: recipe.name,
-        resultCount: recipe.resultCount,
-        resultItem: recipe.resultItem,
-        cost: getCost(recipe),
-        price: getPrice(recipe),
-      };
-    });
-    tmpData.sort((a, b) => {
-      const marginA = a.price - a.cost;
-      const marginB = b.price - b.cost;
-      return marginB - marginA;
-    });
-    return tmpData;
-  }, [items]);
+    const promiseRecipe = Promise.all(
+      recipeList.map<Promise<IDBRecipeExtend>>(async (recipe) => {
+        const items = editMode ? editedItems : await db.item.toArray();
+        const cost = recipe.items.reduce((acc, curr) => {
+          return acc + (items.find((e) => e.id === curr.id)?.price ?? 0) * curr.count;
+        }, 0);
+        const price =
+          recipe.resultCount * (items.find((e) => e.id === recipe.resultItem)?.price ?? 0);
+
+        return {
+          id: recipe.id,
+          items: recipe.items,
+          name: recipe.name,
+          resultCount: recipe.resultCount,
+          resultItem: recipe.resultItem,
+          cost,
+          price,
+        };
+      })
+    );
+    return promiseRecipe;
+  }, [recipeList, editedItems, editMode]);
 
   useEffect(() => {
     resizeHandler();
@@ -132,6 +121,11 @@ function RecipePage() {
       setPieData([]);
     }
   }, [recipeExtend]);
+
+  // Refresh EditedItems
+  useEffect(() => {
+    if (editMode) initItems();
+  }, [editMode]);
 
   // Initialize
   useEffect(() => {
@@ -155,9 +149,9 @@ function RecipePage() {
             <p className="empty--text">데이터가 존재하지 않습니다</p>
           </div>
         )}
-        <HiddenDiv>
+        <HiddenDiv onChange={(isOpen) => setEditMode(isOpen)}>
           <ItemPriceInput
-            items={items}
+            items={editedItems}
             refresh={initItems}
             onChange={(item, price) => itemHandler(item, price)}
           />
@@ -175,7 +169,7 @@ function RecipePage() {
         <Modal open={modal} width="70%" height="70%" maxWidth="700px">
           <RecipeAddModal setModal={setModal} />
         </Modal>
-      ) : (
+      ) : modalType === "DEL" ? (
         <Modal
           open={modal}
           width="50%"
@@ -184,6 +178,10 @@ function RecipePage() {
           onClick={() => setModal(false)}
         >
           <RecipeDelModal />
+        </Modal>
+      ) : (
+        <Modal open={modal} onClick={() => setModal(false)}>
+          <RecipePieModal />
         </Modal>
       )}
     </div>
