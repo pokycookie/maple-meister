@@ -10,6 +10,7 @@ interface IProps {
   width?: string;
   maxWidth?: string;
   height?: string;
+  minHeight?: string;
 }
 
 function Modal(props: IProps) {
@@ -36,6 +37,7 @@ function Modal(props: IProps) {
   const width = props.width;
   const height = props.height;
   const maxWidth = props.maxWidth;
+  const minHeight = props.minHeight;
 
   const modalRoot = document.getElementById("modal-position");
   const modalArea = (
@@ -52,7 +54,7 @@ function Modal(props: IProps) {
         >
           <motion.div
             className="modal-container"
-            style={{ width, height, maxWidth }}
+            style={{ width, height, maxWidth, minHeight }}
             initial={{ y: 300 }}
             animate={{ y: 0 }}
           >

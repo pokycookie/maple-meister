@@ -2,11 +2,11 @@
   width: 100vw;
   height: 100vh;
   min-width: 500px;
-  min-height: 500px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-family: "Montserrat", sans-serif;
+  overflow: hidden;
 
   nav {
     min-width: 70px;
