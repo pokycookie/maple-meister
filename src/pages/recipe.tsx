@@ -32,6 +32,7 @@ function RecipePage() {
   const [chartSize, setChartSize] = useState<ISize>({ width: 10, height: 10 });
   const [editedItems, setEditedItems] = useState<IDBItem[]>([]);
   const [editMode, setEditMode] = useState(false);
+  const [selectedPie, setSelectedPie] = useState<IDBRecipe | null>(null);
 
   const EChartArea = useRef<HTMLDivElement>(null);
 
@@ -53,7 +54,8 @@ function RecipePage() {
 
   const pieClickHandler = (data: ComputedDatum<IPieData>) => {
     modalHandler("PIE");
-    // const selectedData = recipeList.find((e) => e.id === data.id);
+    const selectedData = recipeList.find((e) => e.id === data.id) ?? null;
+    setSelectedPie(selectedData);
     // console.log(selectedData);
   };
 
@@ -166,7 +168,7 @@ function RecipePage() {
         </button>
       </div>
       {modalType === "ADD" ? (
-        <Modal open={modal} width="70%" height="70%" maxWidth="700px">
+        <Modal open={modal} width="70%" height="70%" maxWidth="700px" minHeight="400px">
           <RecipeAddModal setModal={setModal} />
         </Modal>
       ) : modalType === "DEL" ? (
@@ -180,8 +182,14 @@ function RecipePage() {
           <RecipeDelModal />
         </Modal>
       ) : (
-        <Modal open={modal} onClick={() => setModal(false)}>
-          <RecipePieModal />
+        <Modal
+          open={modal}
+          width="50%"
+          height="300px"
+          maxWidth="500px"
+          onClick={() => setModal(false)}
+        >
+          <RecipePieModal data={selectedPie} />
         </Modal>
       )}
     </div>

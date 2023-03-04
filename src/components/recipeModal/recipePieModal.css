@@ -1,0 +1,34 @@
+.recipe__pie__modal .pie__modal--name {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border-bottom: 1px solid grey;
+  padding: 0px 5px;
+  box-sizing: border-box;
+  font-weight: 600;
+}
+
+.recipe__pie__modal .pie__modal--result,
+.recipe__pie__modal .pie__modal--li {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 5px;
+  box-sizing: border-box;
+  color: grey;
+  overflow: hidden;
+}
+
+.recipe__pie__modal .pie__modal--li {
+  font-size: 14px;
+}
+
+.recipe__pie__modal .pie__modal--result {
+  border-bottom: 1px solid grey;
+  font-size: 16px;
+  font-weight: 600;
+}
