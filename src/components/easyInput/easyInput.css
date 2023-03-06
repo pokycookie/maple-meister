@@ -1,5 +1,6 @@
 .easy__input {
-  width: 300px;
+  width: 100%;
+  min-width: 300px;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(2, 1fr);
@@ -9,7 +10,8 @@
 }
 
 .easy__input > button {
-  width: 60px;
+  width: 100%;
+  min-width: 60px;
   font-size: 12px;
   font-weight: 300;
   border-radius: 0px;

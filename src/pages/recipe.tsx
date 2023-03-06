@@ -185,8 +185,8 @@ function RecipePage() {
         <Modal
           open={modal}
           width="50%"
-          height="300px"
           maxWidth="500px"
+          height="auto"
           onClick={() => setModal(false)}
         >
           <RecipePieModal data={selectedPie} />

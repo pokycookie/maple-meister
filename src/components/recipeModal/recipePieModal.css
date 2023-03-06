@@ -19,16 +19,65 @@
   align-items: center;
   padding: 0px 5px;
   box-sizing: border-box;
-  color: grey;
   overflow: hidden;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.recipe__pie__modal .pie__modal--result:hover,
+.recipe__pie__modal .pie__modal--li:hover {
+  background-color: #2c3333;
+  color: white;
 }
 
 .recipe__pie__modal .pie__modal--li {
   font-size: 14px;
+  color: grey;
 }
 
 .recipe__pie__modal .pie__modal--result {
   border-bottom: 1px solid grey;
   font-size: 16px;
   font-weight: 600;
+}
+
+.sub__modal {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.sub__modal .item__name {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 1px solid grey;
+  margin-bottom: 10px;
+}
+
+.sub__modal .item__price {
+  width: 100%;
+  height: 36px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+  text-align: right;
+  padding: 0px 10px;
+}
+
+.sub__modal .btn__area {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.sub__modal .btn--cancel {
+  margin-left: 10px;
 }
