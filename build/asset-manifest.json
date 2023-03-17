@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/maple-meister/static/css/main.4bd7dc03.css",
-    "main.js": "/maple-meister/static/js/main.9127c3fa.js",
+    "main.css": "/maple-meister/static/css/main.b3503365.css",
+    "main.js": "/maple-meister/static/js/main.e552bdca.js",
     "service-worker.js": "/maple-meister/service-worker.js",
     "index.html": "/maple-meister/index.html",
-    "main.4bd7dc03.css.map": "/maple-meister/static/css/main.4bd7dc03.css.map",
-    "main.9127c3fa.js.map": "/maple-meister/static/js/main.9127c3fa.js.map"
+    "main.b3503365.css.map": "/maple-meister/static/css/main.b3503365.css.map",
+    "main.e552bdca.js.map": "/maple-meister/static/js/main.e552bdca.js.map"
   },
   "entrypoints": [
-    "static/css/main.4bd7dc03.css",
-    "static/js/main.9127c3fa.js"
+    "static/css/main.b3503365.css",
+    "static/js/main.e552bdca.js"
   ]
 }
