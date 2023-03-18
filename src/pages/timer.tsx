@@ -58,7 +58,7 @@ function TimerPage() {
         setStart(true);
         setPause(false);
       } else {
-        Noti.warning("0초 이상으로 시간을 설정해주세요");
+        Noti.warning("1초 이상으로 시간을 설정해주세요");
       }
     }
   };
