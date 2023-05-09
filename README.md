@@ -1,5 +1,11 @@
 # [Maple Meister](https://pokycookie.github.io/maple-meister/)
 
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white)
+![Redux](https://img.shields.io/badge/Redux-764ABC?style=for-the-badge&logo=Redux&logoColor=white)
+![PWA](https://img.shields.io/badge/PWA-5A0FC8?style=for-the-badge&logo=PWA&logoColor=white)
+![Dexie](https://img.shields.io/badge/Dexie-272822?style=for-the-badge&logo=Dexie&logoColor=white)
+
 ## 소개
 
 Maple Meister는 Nexon의 온라인 RPG게임 메이플스토리의 전문기술 컨텐츠를 더욱 체계적으로 즐길 수 있도록 도와주기 위한 웹 어플리케이션 입니다. 해당 어플리케이션은 메이플스토리 게임 프로그램에 직접적으로 관여하지 않으며, 단순히 보조적인 역할만을 수행한다는 것을 밝힙니다.
