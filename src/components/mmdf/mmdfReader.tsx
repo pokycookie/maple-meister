@@ -1,66 +1,36 @@
-import { db } from "../../db";
-import { IMMDF, IMMDF__data, TFile } from "../../lib/fileSystem";
-
-type TReaderOption = "option1" | "option2";
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useState } from "react";
+import {
+  IMMDF__DATA,
+  IMMDF__FILE,
+  setItem,
+  setItemLog,
+  setLedger,
+  setRecipe,
+  TFile,
+  TReaderOption,
+  upload,
+} from "../../lib/fileSystem";
+import Modal from "../modal/modal";
+import "./mmdf.css";
 
 interface IProps {
-  onChange?: (data: any) => void;
+  onChange?: (data: IMMDF__FILE) => void;
   option?: TReaderOption;
 }
 
 function MMDFReader(props: IProps) {
-  const setItem = async (fileData: IMMDF__data, option?: TReaderOption) => {
-    const items = fileData.item ?? [];
-    switch (option) {
-      case "option1":
-        items.forEach(async (item) => {
-          const dbItem = await db.item.get({ name: item.name });
-          if (!dbItem) await db.item.add({ name: item.name, price: item.price });
-        });
-        break;
-      default:
-        items.forEach(async (item) => {
-          const dbItem = await db.item.get({ name: item.name });
-          if (dbItem) {
-            await db.item.update(item.id!, { price: item.price });
-          } else {
-            await db.item.add({ name: item.name, price: item.price });
-          }
-        });
-        break;
-    }
-  };
+  const [modal, setModal] = useState(false);
 
-  const setRecipe = async (fileData: IMMDF__data, option?: TReaderOption) => {
-    const recipes = fileData.recipe ?? [];
-    switch (option) {
-      case "option1":
-        recipes.forEach(async (recipe) => {
-          const dbRecipe = await db.recipe.get({ name: recipe.name });
-          delete recipe.id;
-          if (dbRecipe) {
-            await db.recipe.update(dbRecipe.id!, recipe);
-          } else {
-            await db.recipe.add(recipe);
-          }
-        });
-        break;
-      default:
-        recipes.forEach(async (recipe) => {
-          const dbRecipe = await db.recipe.get({ name: recipe.name });
-          delete recipe.id;
-          if (!dbRecipe) await db.recipe.add(recipe);
-        });
-        break;
-    }
-  };
-
-  const mmdfHandler = async (fileData: IMMDF__data, type: TFile, option?: TReaderOption) => {
+  const mmdfHandler = async (fileData: IMMDF__DATA, type: TFile, option?: TReaderOption) => {
     try {
       switch (type) {
         case "backup":
-          await mmdfHandler(fileData, "item");
-          await mmdfHandler(fileData, "recipe");
+          await mmdfHandler(fileData, "item", "force");
+          await mmdfHandler(fileData, "recipe", "force");
+          await mmdfHandler(fileData, "itemLog", "force");
+          await mmdfHandler(fileData, "ledger", "force");
           break;
         case "item":
           await setItem(fileData, option);
@@ -69,8 +39,10 @@ function MMDFReader(props: IProps) {
           await setRecipe(fileData, option);
           break;
         case "itemLog":
+          await setItemLog(fileData, option);
           break;
         case "ledger":
+          await setLedger(fileData, option);
           break;
         case "setting":
           break;
@@ -80,25 +52,38 @@ function MMDFReader(props: IProps) {
     }
   };
 
-  const readerHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const fileList = e.target.files;
-    if (fileList && fileList[0]) {
-      const file = fileList[0];
-      const fileReader = new FileReader();
-      fileReader.readAsText(file);
-      fileReader.onload = () => {
-        try {
-          const dataObj = JSON.parse(fileReader.result as string) as IMMDF;
-          mmdfHandler(dataObj.data, dataObj.meta.type, props.option);
-          if (props.onChange) props.onChange(dataObj);
-        } catch (err) {
-          console.error(err);
-        }
-      };
+  const clickHandler = async () => {
+    setModal(false);
+    const data = await upload();
+    if (data.meta.type === "backup") {
+      await mmdfHandler(data.data.backup!, data.meta.type, props.option);
+    } else {
+      await mmdfHandler(data.data, data.meta.type, props.option);
     }
+    if (props.onChange) props.onChange(data);
+    window.location.reload();
   };
 
-  return <input className="mmdf__reader" type="file" accept=".mmdf" onChange={readerHandler} />;
+  return (
+    <>
+      <button className="mmdf__reader" onClick={() => setModal(true)}>
+        <FontAwesomeIcon icon={faDownload} />
+      </button>
+      <Modal open={modal} onClick={() => setModal(false)} width="auto" height="auto">
+        <div className="warning">
+          <p className="title">경고</p>
+          <span className="text">
+            <p>데이터 복구를 진행하면 현재 존재하는 모든 데이터가 삭제됩니다.</p>
+            <p>정말로 진행하시겠습니까?</p>
+          </span>
+          <div className="btn__area">
+            <button onClick={clickHandler}>확인</button>
+            <button onClick={() => setModal(false)}>취소</button>
+          </div>
+        </div>
+      </Modal>
+    </>
+  );
 }
 
 export default MMDFReader;
