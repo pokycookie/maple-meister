@@ -6,7 +6,7 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import Modal from "../components/modal/modal";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, IDBItem, IDBRecipe } from "../db";
-import { IReduxStore, RSetRecipeList } from "../redux";
+import { IReduxStore, RSetModalID, RSetRecipeList } from "../redux";
 import "../styles/pages/recipe.scss";
 import PieChart, { IPieData } from "../components/nivo/pieChart";
 import { recipeToPieData } from "../lib/nivo";
@@ -18,16 +18,12 @@ import ItemPriceInput from "../components/itemPriceInput/itemPriceInput";
 import HiddenDiv from "../components/hiddenDiv/hiddenDiv";
 import RecipePieModal from "../components/recipeModal/recipePieModal";
 
-type TModal = "ADD" | "DEL" | "PIE";
-
 export interface IDBRecipeExtend extends IDBRecipe {
   cost: number;
   price: number;
 }
 
 function RecipePage() {
-  const [modal, setModal] = useState<boolean>(false);
-  const [modalType, setModalType] = useState<TModal>("ADD");
   const [pieData, setPieData] = useState<IPieData[]>([]);
   const [chartSize, setChartSize] = useState<ISize>({ width: 10, height: 10 });
   const [editedItems, setEditedItems] = useState<IDBItem[]>([]);
@@ -47,16 +43,14 @@ function RecipePage() {
     dispatch(RSetRecipeList(data));
   };
 
-  const modalHandler = (type: TModal) => {
-    setModal(true);
-    setModalType(type);
+  const modalHandler = (id: string) => {
+    dispatch(RSetModalID(id));
   };
 
   const pieClickHandler = (data: ComputedDatum<IPieData>) => {
-    modalHandler("PIE");
+    modalHandler("recipePie");
     const selectedData = recipeList.find((e) => e.id === data.id) ?? null;
     setSelectedPie(selectedData);
-    // console.log(selectedData);
   };
 
   const resizeHandler = () => {
@@ -160,38 +154,22 @@ function RecipePage() {
         </HiddenDiv>
       </div>
       <div className="btn__area">
-        <button className="add__btn circleBtn" onClick={() => modalHandler("ADD")}>
+        <button className="add__btn circleBtn" onClick={() => modalHandler("recipeAdd")}>
           <FontAwesomeIcon icon={faPlus} />
         </button>
-        <button className="dlt__btn circleBtn" onClick={() => modalHandler("DEL")}>
+        <button className="dlt__btn circleBtn" onClick={() => modalHandler("recipeDel")}>
           <FontAwesomeIcon icon={faTrashAlt} />
         </button>
       </div>
-      {modalType === "ADD" ? (
-        <Modal open={modal} width="70%" height="70%" maxWidth="700px" minHeight="400px">
-          <RecipeAddModal setModal={setModal} />
-        </Modal>
-      ) : modalType === "DEL" ? (
-        <Modal
-          open={modal}
-          width="50%"
-          height="300px"
-          maxWidth="500px"
-          onClick={() => setModal(false)}
-        >
-          <RecipeDelModal />
-        </Modal>
-      ) : (
-        <Modal
-          open={modal}
-          width="50%"
-          maxWidth="500px"
-          height="auto"
-          onClick={() => setModal(false)}
-        >
-          <RecipePieModal data={selectedPie} />
-        </Modal>
-      )}
+      <Modal modalID="recipeAdd" width="70%" height="70%" maxWidth="700px" minHeight="400px">
+        <RecipeAddModal />
+      </Modal>
+      <Modal modalID="recipeDel" width="50%" height="300px" maxWidth="500px" autoClose>
+        <RecipeDelModal />
+      </Modal>
+      <Modal modalID="recipePie" width="50%" maxWidth="500px" height="auto" autoClose>
+        <RecipePieModal data={selectedPie} />
+      </Modal>
     </div>
   );
 }

@@ -1,11 +1,13 @@
 import ReactDOM from "react-dom";
 import "./modal.css";
 import { AnimatePresence, motion } from "framer-motion";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { IReduxStore, RSetModalID } from "../../redux";
 
 interface IProps {
-  open: boolean;
+  modalID: string;
   children?: JSX.Element | JSX.Element[];
-  onClick?: () => void;
+  autoClose?: boolean;
   position?: "top" | "center" | "bottom";
   width?: string;
   maxWidth?: string;
@@ -14,9 +16,15 @@ interface IProps {
 }
 
 function Modal(props: IProps) {
+  const modalID = useSelector<IReduxStore, string | null>((state) => {
+    return state.modalID;
+  }, shallowEqual);
+
+  const dispatch = useDispatch();
+
   const clickHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const target = (e.target as Element).className === "modal-area";
-    if (props.onClick && target) props.onClick();
+    const target = (e.target as Element).id === "modal-area";
+    if (props.autoClose && target) dispatch(RSetModalID(null));
   };
 
   let alignItems = "flex-end";
@@ -42,10 +50,10 @@ function Modal(props: IProps) {
   const modalRoot = document.getElementById("modal-position");
   const modalArea = (
     <AnimatePresence>
-      {props.open && (
+      {props.modalID === modalID && (
         <motion.div
           key="modal"
-          className="modal-area"
+          id="modal-area"
           onClick={clickHandler}
           style={{ alignItems }}
           initial={{ opacity: 0 }}

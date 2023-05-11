@@ -6,17 +6,20 @@ export interface IReduxStore {
   page: TPage;
   itemList: IDBItem[];
   recipeList: IDBRecipe[];
+  modalID: string | null;
 }
 
 const initState: IReduxStore = {
   page: "timer",
   itemList: [],
   recipeList: [],
+  modalID: null,
 };
 
 export const RSetPage = createAction<TPage>("PAGE");
 export const RSetItemList = createAction<IDBItem[]>("ITEMLIST");
 export const RSetRecipeList = createAction<IDBRecipe[]>("RECIPELIST");
+export const RSetModalID = createAction<string | null>("MODALID");
 
 const reducer = createReducer(initState, (builder) => {
   builder
@@ -28,6 +31,9 @@ const reducer = createReducer(initState, (builder) => {
     })
     .addCase(RSetRecipeList, (state, action) => {
       state.recipeList = action.payload;
+    })
+    .addCase(RSetModalID, (state, action) => {
+      state.modalID = action.payload;
     });
 });
 
