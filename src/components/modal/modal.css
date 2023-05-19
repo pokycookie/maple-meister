@@ -2,7 +2,7 @@
   position: relative;
 }
 
-.modal-area {
+#modal-area {
   width: 100vw;
   height: 100vh;
   position: absolute;

@@ -4,7 +4,7 @@ import { IDBItem, db, IDBLedger } from "../db";
 import Select, { SingleValue } from "react-select";
 import NumberInput from "../components/numberInput/numberInput";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { IReduxStore, RSetItemList } from "../redux";
+import { IReduxStore, RSetItemList, RSetModalID } from "../redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList } from "@fortawesome/free-solid-svg-icons";
 import Modal from "../components/modal/modal";
@@ -18,7 +18,6 @@ function LedgerPage() {
   const [item, setItem] = useState<number | null>(null);
   const [price, setPrice] = useState<number>(0);
   const [count, setCount] = useState<number>(1);
-  const [modal, setModal] = useState<boolean>(false);
 
   const itemList = useSelector<IReduxStore, IDBItem[]>((state) => {
     return state.itemList;
@@ -69,7 +68,7 @@ function LedgerPage() {
   };
 
   const listHandler = () => {
-    setModal(true);
+    dispatch(RSetModalID("ledgerList"));
   };
 
   const sellHandler = async () => {
@@ -158,7 +157,7 @@ function LedgerPage() {
           <FontAwesomeIcon icon={faList} />
         </button>
       </div>
-      <Modal open={modal} onClick={() => setModal(false)} width="60%" height="70%" maxWidth="550px">
+      <Modal modalID="ledgerList" width="60%" height="70%" maxWidth="550px" autoClose>
         <LedgerListContainer />
       </Modal>
     </div>

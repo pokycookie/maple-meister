@@ -4,20 +4,16 @@ import { SingleValue } from "react-select";
 import Select from "react-select";
 import { db, IDBItem, IIngredient } from "../../db";
 import { Noti } from "../../lib/notification";
-import { IReduxStore, RSetRecipeList } from "../../redux";
+import { IReduxStore, RSetModalID, RSetRecipeList } from "../../redux";
 import NumberInput from "../numberInput/numberInput";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-
-interface IProps {
-  setModal: React.Dispatch<React.SetStateAction<boolean>>;
-}
 
 interface IIngredientPlus extends IIngredient {
   name: string;
 }
 
-function RecipeAddModal(props: IProps) {
+function RecipeAddModal() {
   const [title, setTitle] = useState<string>("");
   const [resultItem, setResultItem] = useState<number | null>(null);
   const [resultCount, setResultCount] = useState<number>(1);
@@ -54,7 +50,7 @@ function RecipeAddModal(props: IProps) {
         .then(() => {
           Noti.success(`${title}가 새로운 레시피로 추가되었습니다.`);
           refreshDB();
-          props.setModal(false);
+          dispatch(RSetModalID(null));
         })
         .catch((err) => {
           console.error(err);
@@ -166,7 +162,7 @@ function RecipeAddModal(props: IProps) {
         <button className="form--btn ok--btn" onClick={recipeSubmitHandler}>
           레시피 추가
         </button>
-        <button className="form--btn cancel--btn" onClick={() => props.setModal(false)}>
+        <button className="form--btn cancel--btn" onClick={() => dispatch(RSetModalID(null))}>
           취소
         </button>
       </div>
