@@ -1,6 +1,6 @@
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   IMMDF__DATA,
   IMMDF__FILE,
@@ -14,6 +14,7 @@ import {
 } from "../../lib/fileSystem";
 import Modal from "../modal/modal";
 import "./mmdf.css";
+import { RSetModalID } from "../../redux";
 
 interface IProps {
   onChange?: (data: IMMDF__FILE) => void;
@@ -21,7 +22,7 @@ interface IProps {
 }
 
 function MMDFReader(props: IProps) {
-  const [modal, setModal] = useState(false);
+  const dispatch = useDispatch();
 
   const mmdfHandler = async (fileData: IMMDF__DATA, type: TFile, option?: TReaderOption) => {
     try {
@@ -53,7 +54,7 @@ function MMDFReader(props: IProps) {
   };
 
   const clickHandler = async () => {
-    setModal(false);
+    dispatch(RSetModalID("dataResetWarning"));
     const data = await upload();
     if (data.meta.type === "backup") {
       await mmdfHandler(data.data.backup!, data.meta.type, props.option);
@@ -66,10 +67,10 @@ function MMDFReader(props: IProps) {
 
   return (
     <>
-      <button className="mmdf__reader" onClick={() => setModal(true)}>
+      <button className="mmdf__reader" onClick={() => dispatch(RSetModalID("dataResetWarning"))}>
         <FontAwesomeIcon icon={faDownload} />
       </button>
-      <Modal open={modal} onClick={() => setModal(false)} width="auto" height="auto">
+      <Modal modalID="dataResetWarning" autoClose width="auto" height="auto">
         <div className="warning">
           <p className="title">경고</p>
           <span className="text">
@@ -78,7 +79,7 @@ function MMDFReader(props: IProps) {
           </span>
           <div className="btn__area">
             <button onClick={clickHandler}>확인</button>
-            <button onClick={() => setModal(false)}>취소</button>
+            <button onClick={() => dispatch(RSetModalID(null))}>취소</button>
           </div>
         </div>
       </Modal>
