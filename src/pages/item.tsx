@@ -13,6 +13,8 @@ import Modal from "../components/modal/modal";
 import { checkDateEqual } from "../lib/time";
 import ItemLogList from "../components/itemLogList/itemLogList";
 import EasyInput from "../components/easyInput/easyInput";
+import { SELECT_ITEM_ERR } from "../lang/noti";
+import { updateItem } from "../utils/dexie";
 
 function ItemPage() {
   const [item, setItem] = useState<number | null>(null);
@@ -29,33 +31,17 @@ function ItemPage() {
     else setItem(null);
   };
 
-  const priceHandler = (value: number) => {
-    setPrice(value);
-  };
-
   const refreshDB = async () => {
     const data = await db.item.toArray();
     dispatch(RSetItemList(data));
   };
 
-  const editHandler = async () => {
-    if (item) {
-      const lastPrice = (await db.item.get(item))?.price ?? 0;
-      if (lastPrice === price) {
-        Noti.warning("아이템 가격이 이전과 동일합니다");
-      } else {
-        try {
-          await db.item.update(item, { price });
-          await db.itemLog.add({ item, price, updated: new Date() });
-          Noti.success("아이템 가격이 업데이트 되었습니다");
-        } catch (err) {
-          console.error(err);
-          Noti.danger("가격을 업데이트 하지 못했습니다");
-        }
-      }
-    } else {
-      Noti.warning("아이템을 선택해주세요");
+  const updateHandler = async () => {
+    if (!item) {
+      Noti.warning(SELECT_ITEM_ERR);
+      return;
     }
+    await updateItem(item, price);
   };
 
   const options = itemList.map((e) => {
@@ -95,10 +81,10 @@ function ItemPage() {
           unit="메소"
           value={price}
           separators
-          onChange={(value) => priceHandler(value)}
+          onChange={(value) => setPrice(value)}
         />
         <EasyInput onChange={(value) => setPrice((prev) => prev + value)} />
-        <button className="edit-btn" onClick={editHandler}>
+        <button className="edit-btn" onClick={updateHandler}>
           <FontAwesomeIcon icon={faPenToSquare} />
         </button>
       </div>

@@ -1,5 +1,7 @@
 import Dexie, { Table } from "dexie";
 
+export type TTransactionType = "buy" | "sell";
+
 export interface IDBTimer {
   id?: number;
   title: string;
@@ -30,13 +32,13 @@ export interface IDBItemLog {
   item: number;
   price: number;
   updated: Date;
-  type?: "buy" | "sell";
+  type?: TTransactionType;
 }
 
 export interface IDBLedger {
   id?: number;
   item: number;
-  type: "buy" | "sell";
+  type: TTransactionType;
   price: number;
   count: number;
   assets: number;
