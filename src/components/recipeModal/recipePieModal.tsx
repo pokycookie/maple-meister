@@ -114,8 +114,14 @@ function EditSubModal(props: ISubProps) {
   return (
     <div className="sub__modal">
       <p className="item__name">{props.data.name}</p>
-      <NumberInput className="item__price" value={price} unit="메소" separators />
-      <EasyInput onChange={(value) => setPrice((prev) => (prev += value))} />
+      <NumberInput
+        className="item__price"
+        value={price}
+        onChange={(price) => setPrice(price)}
+        unit="메소"
+        separators
+      />
+      <EasyInput onChange={(value) => setPrice((prev) => prev + value)} />
       <div className="btn__area">
         <button className="btn--ok" onClick={okHandler}>
           적용
