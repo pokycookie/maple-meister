@@ -15,6 +15,7 @@ import { Noti } from "../lib/notification";
 import EasyInput from "../components/easyInput/easyInput";
 import { buyItem, sellItem } from "../utils/dexie";
 import { SELECT_ITEM_ERR } from "../lang/noti";
+import EditableList from "../components/editableList/editableList";
 
 function LedgerPage() {
   const [item, setItem] = useState<number | null>(null);
@@ -154,7 +155,9 @@ function LedgerListContainer() {
               {(i === 0 || !checkDateEqual(e.updated, arr[i - 1].updated)) && (
                 <p className="ledger__list--seperator">{e.updated.toLocaleDateString()}</p>
               )}
-              <LedgerList data={e} />
+              <EditableList key={e.id ?? i} editHandler={() => {}} deleteHandler={() => {}}>
+                <LedgerList data={e} />
+              </EditableList>
             </React.Fragment>
           );
         })}

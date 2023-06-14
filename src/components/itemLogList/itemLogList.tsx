@@ -14,15 +14,14 @@ function ItemLogList(props: IProps) {
 
   useEffect(() => {
     const setItemName = async () => {
-      const tmpItem = (await db.item.get(props.data.item))?.name ?? "";
+      const tmpItem = (await db.item.get(props.data.item))?.name ?? "[삭제된 아이템의 흔적]";
       setItem(tmpItem);
     };
     setItemName();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [props.data]);
 
   return (
-    <li className="item__log__list">
+    <div className="item__log__list">
       <div className="item__log__list--left">
         <p className="item__log__list--item">{item}</p>
         <p className="item__log__list--updated">{getSimpeTimeText(props.data.updated)}</p>
@@ -34,7 +33,7 @@ function ItemLogList(props: IProps) {
           {decimalSeparator(Math.abs(props.diff))}메소
         </p>
       </div>
-    </li>
+    </div>
   );
 }
 
