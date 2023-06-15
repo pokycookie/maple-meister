@@ -7,6 +7,8 @@ import {
   DELETE_ITEMLOG_ERR,
   DELETE_ITEM_ERR,
   DELETE_ITEM_RELATED_ERR,
+  DELETE_LEDGER,
+  DELETE_LEDGER_ERR,
   ITEM_NAME_ERR,
   SAME_PRICE,
   UPDATE_ITEM,
@@ -136,5 +138,17 @@ export const deleteItemLog = async (logID: number) => {
     // Dexie error
     console.error(err);
     Noti.danger(DELETE_ITEMLOG_ERR);
+  }
+};
+
+export const deleteLedger = async (id: number) => {
+  try {
+    // Delete ledger
+    await db.ledger.delete(id);
+    Noti.success(DELETE_LEDGER);
+  } catch (err) {
+    // Dexie error
+    console.error(err);
+    Noti.danger(DELETE_LEDGER_ERR);
   }
 };

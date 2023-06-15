@@ -30,6 +30,9 @@
   font-size: 15px;
   margin-bottom: 5px;
 }
+.item__log__list--item.deleted__item {
+  color: grey;
+}
 .item__log__list--updated {
   font-size: 12px;
   color: grey;

@@ -13,7 +13,7 @@ import { checkDateEqual } from "../lib/time";
 import { faFolderOpen } from "@fortawesome/free-regular-svg-icons";
 import { Noti } from "../lib/notification";
 import EasyInput from "../components/easyInput/easyInput";
-import { buyItem, sellItem } from "../utils/dexie";
+import { buyItem, deleteLedger, sellItem } from "../utils/dexie";
 import { SELECT_ITEM_ERR } from "../lang/noti";
 import EditableList from "../components/editableList/editableList";
 
@@ -131,13 +131,18 @@ function LedgerPage() {
 function LedgerListContainer() {
   const [ledgerList, setLedgerList] = useState<IDBLedger[]>([]);
 
-  const getLedger = async () => {
+  const updateLedger = async () => {
     const tmpLedgerList = await db.ledger.toArray();
     setLedgerList(tmpLedgerList);
   };
 
+  const deleteHandler = async (id: number) => {
+    deleteLedger(id);
+    updateLedger();
+  };
+
   useEffect(() => {
-    getLedger();
+    updateLedger();
   }, []);
 
   return (
@@ -155,7 +160,7 @@ function LedgerListContainer() {
               {(i === 0 || !checkDateEqual(e.updated, arr[i - 1].updated)) && (
                 <p className="ledger__list--seperator">{e.updated.toLocaleDateString()}</p>
               )}
-              <EditableList key={e.id ?? i} editHandler={() => {}} deleteHandler={() => {}}>
+              <EditableList key={e.id ?? i} deleteHandler={() => deleteHandler(e.id!)}>
                 <LedgerList data={e} />
               </EditableList>
             </React.Fragment>

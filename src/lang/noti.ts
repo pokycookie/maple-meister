@@ -16,8 +16,11 @@ export const DELETE_ITEM_ERR = "아이템을 삭제하지 못했습니다";
 export const DELETE_ITEM_RELATED_ERR =
   "다른 레시피에서 사용중이므로 해당 아이템을 삭제할 수 없습니다";
 
-export const UPDATE_LEDGER = "장부가 업데이트 되었습니다";
-export const UPDATE_LEDGER_ERR = "장부를 업데이트 하지 못했습니다";
+export const UPDATE_LEDGER = "거래기록이 업데이트 되었습니다";
+export const UPDATE_LEDGER_ERR = "거래기록을 업데이트하지 못했습니다";
+
+export const DELETE_LEDGER = "거래기록이 삭제되었습니다";
+export const DELETE_LEDGER_ERR = "거래기록을 삭제하지 못했습니다";
 
 export const DELETE_ITEMLOG = "아이템 기록이 삭제되었습니다";
 export const DELETE_ITEMLOG_ERR = "아이템 기록을 삭제하지 못했습니다";
