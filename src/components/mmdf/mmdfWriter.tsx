@@ -1,6 +1,5 @@
 import { faUpload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
 import { db } from "../../db";
 import { download, IMMDF, TFile } from "../../lib/fileSystem";
 
@@ -9,8 +8,6 @@ interface IProps {
 }
 
 function MMDFWriter(props: IProps) {
-  const [data, setData] = useState<IMMDF>({});
-
   const getData = async (type: TFile) => {
     let tmpData: IMMDF = {};
     switch (type) {
@@ -36,16 +33,12 @@ function MMDFWriter(props: IProps) {
       case "setting":
         break;
     }
-    setData(tmpData);
+    return tmpData;
   };
 
-  const clickHandler = () => {
-    download(data, props.type);
+  const clickHandler = async () => {
+    download(await getData(props.type), props.type);
   };
-
-  useEffect(() => {
-    getData(props.type);
-  }, [props.type]);
 
   return (
     <button className="mmdf__writer" onClick={clickHandler}>
