@@ -24,7 +24,7 @@ interface IDateRange {
 function ChartPage() {
   const [item, setItem] = useState<number | null>(null);
   const [data, setData] = useState<Serie[]>([]);
-  const [calendarType, setCalendarType] = useState<TCalendar>("daily");
+  const [calendarType, setCalendarType] = useState<TCalendar>("monthly");
   const [dateFilter, setDateFilter] = useState<IDateRange>({ start: new Date(), end: new Date() });
 
   const itemList = useSelector<IReduxStore, IDBItem[]>((state) => {
@@ -116,6 +116,7 @@ function ChartPage() {
           <RowSelector
             className="row__selector"
             options={calendarTypeList}
+            default={2}
             onChange={(value) => setCalendarType(value)}
           />
           <Dropdown
