@@ -40,6 +40,19 @@ function Calendar(props: IProps) {
     const today = new Date();
     setYear(today.getFullYear());
     setMonth(today.getMonth());
+
+    const tmpCalendarData: ICalendar = { value: today.getDate(), status: "current", date: today };
+    switch (props.type) {
+      case "daily":
+        tableHandler(tmpCalendarData);
+        break;
+      case "weekly":
+        weeklyHandler(tmpCalendarData);
+        break;
+      case "monthly":
+        monthlyHandler(tmpCalendarData);
+        break;
+    }
   };
 
   const monthHandler = (type: "inc" | "dec") => {
@@ -62,6 +75,7 @@ function Calendar(props: IProps) {
     const start = new Date(year, month, 1, 0, 0, 0);
     const end = new Date(year, month + 1, 0, 23, 59, 59);
 
+    setSelectedDate(data.date);
     if (props.onChange) props.onChange(start, end);
   };
 
@@ -74,6 +88,7 @@ function Calendar(props: IProps) {
     const start = new Date(year, month, date - day, 0, 0, 0);
     const end = new Date(year, month, date + (6 - day), 23, 59, 59);
 
+    setSelectedDate(data.date);
     if (props.onChange) props.onChange(start, end);
   };
 
@@ -217,7 +232,8 @@ function Calendar(props: IProps) {
                   key={index}
                   className={`${element.status}${getWeekday(index)}${getSelected(
                     element,
-                    selectedDate
+                    selectedDate,
+                    "daily"
                   )}${getToday(element)}`}
                   onClick={() => tableHandler(element)}
                 >
@@ -229,7 +245,7 @@ function Calendar(props: IProps) {
           ? weeklyArr.map((e, i) => {
               return (
                 <button
-                  className={`${getSelected(e[0], selectedDate)}`}
+                  className={`${getSelected(e[0], selectedDate, "weekly")}`}
                   key={i}
                   onClick={() => weeklyHandler(e[0])}
                 >
@@ -248,7 +264,11 @@ function Calendar(props: IProps) {
             })
           : monthlyArr.map((e, i) => {
               return (
-                <button key={i} onClick={() => monthlyHandler(e)}>
+                <button
+                  key={i}
+                  className={`${getSelected(e, selectedDate, "monthly")}`}
+                  onClick={() => monthlyHandler(e)}
+                >
                   {e.value}
                 </button>
               );
@@ -270,17 +290,28 @@ function getWeekday(index: number) {
   }
 }
 
-function getSelected(element: ICalendar, selectedDate: Date | null) {
+function getSelected(element: ICalendar, selectedDate: Date | null, unit: TCalendar) {
   if (selectedDate === null) return "";
-  if (
-    element.date.getFullYear() === selectedDate.getFullYear() &&
-    element.date.getMonth() === selectedDate.getMonth() &&
-    element.date.getDate() === selectedDate.getDate()
-  ) {
-    return " selected";
-  } else {
-    return "";
+
+  const yearBool = element.date.getFullYear() === selectedDate.getFullYear();
+  const monthBool = element.date.getMonth() === selectedDate.getMonth();
+  const dateBool = element.date.getDate() === selectedDate.getDate();
+  const weekBool = getWeekBool(getWeekObj(element.date), getWeekObj(selectedDate));
+
+  switch (unit) {
+    case "daily":
+      if (yearBool && monthBool && dateBool) return " selected";
+      break;
+    case "weekly":
+      if (yearBool && monthBool && weekBool) return " selected";
+      break;
+    case "monthly":
+      if (yearBool && monthBool) return " selected";
+      break;
+    default:
+      break;
   }
+  return "";
 }
 
 function getToday(element: ICalendar) {
@@ -295,6 +326,30 @@ function getToday(element: ICalendar) {
   } else {
     return "";
   }
+}
+
+interface IWeekObj {
+  start: Date;
+  end: Date;
+}
+
+function getWeekObj(time: Date) {
+  const year = time.getFullYear();
+  const month = time.getMonth();
+  const date = time.getDate();
+  const day = time.getDay();
+
+  const start = new Date(year, month, date - day, 0, 0, 0);
+  const end = new Date(year, month, date + (6 - day), 23, 59, 59);
+
+  return { start, end };
+}
+
+function getWeekBool(week1: IWeekObj, week2: IWeekObj) {
+  const start = week1.start.getTime() === week2.start.getTime();
+  const end = week1.end.getTime() === week2.end.getTime();
+
+  return start && end;
 }
 
 export default Calendar;

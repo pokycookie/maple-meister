@@ -74,6 +74,10 @@
 .tableArea.weekly button .current.saturday {
   color: #0096ff;
 }
+.tableArea.weekly button .current.today {
+  text-decoration: underline;
+  color: white;
+}
 .tableArea.monthly {
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(3, 1fr);
@@ -100,10 +104,7 @@
   color: #0096ff;
 }
 .tableArea button.current.today > p {
-  width: 25px;
-  height: 25px;
-  border-radius: 100%;
-  background-color: #6c7171;
+  text-decoration: underline;
   color: white;
 }
 .tableArea button.prev,
