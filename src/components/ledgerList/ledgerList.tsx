@@ -22,7 +22,7 @@ function LedgerList(props: IProps) {
   }, []);
 
   return (
-    <li className="ledger__list">
+    <div className="ledger__list">
       <div className="ledger__list--left">
         <p className="ledger__list--item">{item}</p>
         <p className="ledger__list--updated">{getSimpeTimeText(data.updated)}</p>
@@ -34,7 +34,7 @@ function LedgerList(props: IProps) {
         </p>
         <p className="ledger__list--assets">잔액 {decimalSeparator(data.assets)}메소</p>
       </div>
-    </li>
+    </div>
   );
 }
 

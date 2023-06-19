@@ -1,5 +1,8 @@
 @import "./reset.scss";
+@import "./color.scss";
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap");
+
+@import "./components/editableList.scss";
 
 button {
   width: 100px;

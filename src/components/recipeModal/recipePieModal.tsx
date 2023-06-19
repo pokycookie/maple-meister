@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { db, IDBItem, IDBRecipe } from "../../db";
-import { Noti } from "../../lib/notification";
 import { decimalSeparator } from "../../lib/numberString";
+import { updateItem } from "../../utils/dexie";
 import EasyInput from "../easyInput/easyInput";
 import NumberInput from "../numberInput/numberInput";
 import "./recipePieModal.css";
@@ -89,22 +89,9 @@ function EditSubModal(props: ISubProps) {
     props.setSubModal(null);
   };
 
-  const okHandler = async () => {
-    const item = props.data.id!;
-    const lastPrice = (await db.item.get(item))?.price ?? 0;
-    if (lastPrice === price) {
-      Noti.warning("아이템 가격이 이전과 동일합니다");
-    } else {
-      try {
-        await db.item.update(item, { price });
-        await db.itemLog.add({ item, price, updated: new Date() });
-        Noti.success("아이템 가격이 업데이트 되었습니다");
-        backToMainModal();
-      } catch (err) {
-        console.error(err);
-        Noti.danger("가격을 업데이트 하지 못했습니다");
-      }
-    }
+  const updateHandler = async () => {
+    const itemID = props.data.id!;
+    await updateItem(itemID, price);
   };
 
   const cancelHandler = () => {
@@ -114,10 +101,16 @@ function EditSubModal(props: ISubProps) {
   return (
     <div className="sub__modal">
       <p className="item__name">{props.data.name}</p>
-      <NumberInput className="item__price" value={price} unit="메소" separators />
-      <EasyInput onChange={(value) => setPrice((prev) => (prev += value))} />
+      <NumberInput
+        className="item__price"
+        value={price}
+        onChange={(price) => setPrice(price)}
+        unit="메소"
+        separators
+      />
+      <EasyInput onChange={(value) => setPrice((prev) => prev + value)} />
       <div className="btn__area">
-        <button className="btn--ok" onClick={okHandler}>
+        <button className="btn--ok" onClick={updateHandler}>
           적용
         </button>
         <button className="btn--cancel" onClick={cancelHandler}>

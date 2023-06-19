@@ -10,21 +10,24 @@ interface IProps {
 }
 
 function ItemLogList(props: IProps) {
-  const [item, setItem] = useState<string>("");
+  const [item, setItem] = useState<string | null>(null);
 
   useEffect(() => {
     const setItemName = async () => {
-      const tmpItem = (await db.item.get(props.data.item))?.name ?? "";
+      const tmpItem = (await db.item.get(props.data.item))?.name ?? null;
       setItem(tmpItem);
     };
     setItemName();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [props.data]);
 
   return (
-    <li className="item__log__list">
+    <div className="item__log__list">
       <div className="item__log__list--left">
-        <p className="item__log__list--item">{item}</p>
+        {item ? (
+          <p className="item__log__list--item">{item}</p>
+        ) : (
+          <p className="item__log__list--item deleted__item">[삭제된 아이템]</p>
+        )}
         <p className="item__log__list--updated">{getSimpeTimeText(props.data.updated)}</p>
       </div>
       <div className="item__log__list--right">
@@ -34,7 +37,7 @@ function ItemLogList(props: IProps) {
           {decimalSeparator(Math.abs(props.diff))}메소
         </p>
       </div>
-    </li>
+    </div>
   );
 }
 

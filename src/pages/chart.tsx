@@ -1,7 +1,7 @@
 import { faFolderOpen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Serie } from "@nivo/line";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { shallowEqual, useSelector } from "react-redux";
 import Select, { SingleValue } from "react-select";
 import Calendar, { TCalendar } from "../components/calendar/calendar";
@@ -25,25 +25,84 @@ function ChartPage() {
   const [item, setItem] = useState<number | null>(null);
   const [data, setData] = useState<Serie[]>([]);
   const [calendarType, setCalendarType] = useState<TCalendar>("daily");
-  const [dateFilter, setDateFilter] = useState<IDateRange>({ start: new Date(), end: new Date() });
+  const [selected, setSelected] = useState<{ value: number; label: string } | null>(null);
+
+  const [dailyFilter, setDailyFilter] = useState<IDateRange>(getNearDate(new Date(), "daily"));
+  const [weeklyFilter, setWeeklyFilter] = useState<IDateRange>(getNearDate(new Date(), "weekly"));
+  const [monthlyFilter, setMonthlyFilter] = useState<IDateRange>(
+    getNearDate(new Date(), "monthly")
+  );
+  const [dateFilter, setDateFilter] = useState<IDateRange>(monthlyFilter);
+
+  const calendarDefaultDate = useMemo(() => {
+    switch (calendarType) {
+      case "daily":
+        return dailyFilter.start;
+      case "weekly":
+        return weeklyFilter.start;
+      case "monthly":
+        return monthlyFilter.start;
+      default:
+        return new Date();
+    }
+  }, [calendarType, dailyFilter, monthlyFilter, weeklyFilter]);
 
   const itemList = useSelector<IReduxStore, IDBItem[]>((state) => {
     return state.itemList;
   }, shallowEqual);
 
   const selectHandler = (e: SingleValue<{ value: number; label: string }>) => {
-    if (e) setItem(e.value);
-    else setItem(null);
+    if (!e) {
+      setItem(null);
+      setSelected(null);
+      return;
+    }
+    setItem(e.value);
+    setSelected(e);
   };
 
-  const options = itemList.map((e) => {
-    return { value: e.id!, label: e.name };
-  });
+  const options = useMemo(() => {
+    const options = itemList.map((e) => {
+      return { value: e.id!, label: e.name };
+    });
+    if (options.length > 0) {
+      setItem(options[0].value);
+      setSelected(options[0]);
+    }
+    return options;
+  }, [itemList]);
+
+  const calendarHandler = ({ start, end }: { start: Date; end: Date }) => {
+    switch (calendarType) {
+      case "daily":
+        setDailyFilter({ start, end });
+        break;
+      case "weekly":
+        setWeeklyFilter({ start, end });
+        break;
+      case "monthly":
+        setMonthlyFilter({ start, end });
+        break;
+      default:
+        break;
+    }
+  };
 
   useEffect(() => {
-    setDateFilter(getNearDate(dateFilter.start, calendarType));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calendarType]);
+    switch (calendarType) {
+      case "daily":
+        setDateFilter(dailyFilter);
+        break;
+      case "weekly":
+        setDateFilter(weeklyFilter);
+        break;
+      case "monthly":
+        setDateFilter(monthlyFilter);
+        break;
+      default:
+        break;
+    }
+  }, [calendarType, dailyFilter, monthlyFilter, weeklyFilter]);
 
   useEffect(() => {
     const getSerieData = async () => {
@@ -110,12 +169,14 @@ function ChartPage() {
             isClearable={true}
             onChange={selectHandler}
             maxMenuHeight={33 * 6}
+            value={selected}
           />
         </div>
         <div className="filter__area--right">
           <RowSelector
             className="row__selector"
             options={calendarTypeList}
+            default={2}
             onChange={(value) => setCalendarType(value)}
           />
           <Dropdown
@@ -123,7 +184,8 @@ function ChartPage() {
             value={`${dateFilter.start.toLocaleDateString()} - ${dateFilter.end.toLocaleDateString()}`}
           >
             <Calendar
-              onChange={(start, end) => setDateFilter({ start, end })}
+              onChange={(start, end) => calendarHandler({ start, end })}
+              default={calendarDefaultDate}
               type={calendarType}
             />
           </Dropdown>

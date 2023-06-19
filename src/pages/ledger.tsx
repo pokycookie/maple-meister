@@ -13,6 +13,9 @@ import { checkDateEqual } from "../lib/time";
 import { faFolderOpen } from "@fortawesome/free-regular-svg-icons";
 import { Noti } from "../lib/notification";
 import EasyInput from "../components/easyInput/easyInput";
+import { buyItem, deleteLedger, sellItem } from "../utils/dexie";
+import { SELECT_ITEM_ERR } from "../lang/noti";
+import EditableList from "../components/editableList/editableList";
 
 function LedgerPage() {
   const [item, setItem] = useState<number | null>(null);
@@ -30,63 +33,24 @@ function LedgerPage() {
     dispatch(RSetItemList(data));
   };
 
-  const updateItem = async () => {
-    if (!item) return;
-    const prevPrice = (await db.item.get(item))?.price;
-    if (prevPrice === price) return;
-    await db.item
-      .update(item, { price })
-      .then(() => {
-        Noti.success("아이템 가격이 업데이트 되었습니다");
-      })
-      .catch((err) => {
-        console.error(err);
-        Noti.danger("가격을 업데이트 하지 못했습니다");
-      });
-  };
-
-  const addLedger = async (type: "buy" | "sell") => {
-    if (item) {
-      let assets = (await db.user.get({ key: "assets" }))?.value ?? 0;
-      if (type === "buy") {
-        assets -= price * count;
-      } else {
-        assets += price * count;
-      }
-      try {
-        await db.user.put({ key: "assets", value: assets });
-        await db.ledger.add({ item, price, count, type, updated: new Date(), assets });
-        await db.itemLog.add({ item, price, updated: new Date(), type });
-        Noti.success("장부가 업데이트 되었습니다");
-      } catch (err) {
-        console.error(err);
-        Noti.danger("장부를 업데이트 하지 못했습니다");
-      }
-    } else {
-      Noti.warning("아이템을 선택해주세요");
-    }
-  };
-
   const listHandler = () => {
     dispatch(RSetModalID("ledgerList"));
   };
 
   const sellHandler = async () => {
-    await updateItem();
-    await addLedger("sell");
+    if (!item) {
+      Noti.warning(SELECT_ITEM_ERR);
+      return;
+    }
+    await sellItem(item, price, count);
   };
 
   const buyHandler = async () => {
-    await updateItem();
-    await addLedger("buy");
-  };
-
-  const countHandler = (value: number) => {
-    setCount(value);
-  };
-
-  const priceHandler = (value: number) => {
-    setPrice(value);
+    if (!item) {
+      Noti.warning(SELECT_ITEM_ERR);
+      return;
+    }
+    await buyItem(item, price, count);
   };
 
   const selectHandler = (e: SingleValue<{ value: number; label: string }>) => {
@@ -132,14 +96,14 @@ function LedgerPage() {
             unit="메소"
             value={price}
             separators
-            onChange={(value) => priceHandler(value)}
+            onChange={(value) => setPrice(value)}
           />
           <NumberInput
             className="input-count"
             unit="개"
             value={count}
             separators
-            onChange={(value) => countHandler(value)}
+            onChange={(value) => setCount(value)}
           />
         </div>
         <EasyInput onChange={(value) => setPrice((prev) => prev + value)} />
@@ -167,13 +131,18 @@ function LedgerPage() {
 function LedgerListContainer() {
   const [ledgerList, setLedgerList] = useState<IDBLedger[]>([]);
 
-  const getLedger = async () => {
+  const updateLedger = async () => {
     const tmpLedgerList = await db.ledger.toArray();
     setLedgerList(tmpLedgerList);
   };
 
+  const deleteHandler = async (id: number) => {
+    deleteLedger(id);
+    updateLedger();
+  };
+
   useEffect(() => {
-    getLedger();
+    updateLedger();
   }, []);
 
   return (
@@ -191,7 +160,9 @@ function LedgerListContainer() {
               {(i === 0 || !checkDateEqual(e.updated, arr[i - 1].updated)) && (
                 <p className="ledger__list--seperator">{e.updated.toLocaleDateString()}</p>
               )}
-              <LedgerList data={e} />
+              <EditableList key={e.id ?? i} deleteHandler={() => deleteHandler(e.id!)}>
+                <LedgerList data={e} />
+              </EditableList>
             </React.Fragment>
           );
         })}

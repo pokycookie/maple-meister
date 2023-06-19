@@ -34,7 +34,7 @@ function LineChart(props: IProps) {
       pointColor="#ffffff"
       pointBorderWidth={2}
       pointBorderColor={{ from: "serieColor" }}
-      enablePointLabel={true}
+      // enablePointLabel={true}
       pointLabelYOffset={-10}
       pointLabel={(d) => `${d.yFormatted}`}
       enableArea={true}
@@ -46,7 +46,7 @@ function LineChart(props: IProps) {
       ]}
       enableGridX={false}
       fill={[{ match: "*", id: "gradient1" }]}
-      curve={"catmullRom"}
+      curve={"monotoneX"}
       useMesh={true}
       animate={false}
       tooltip={(e) => {

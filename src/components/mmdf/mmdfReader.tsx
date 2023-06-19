@@ -54,7 +54,7 @@ function MMDFReader(props: IProps) {
   };
 
   const clickHandler = async () => {
-    dispatch(RSetModalID("dataResetWarning"));
+    dispatch(RSetModalID(null));
     const data = await upload();
     if (data.meta.type === "backup") {
       await mmdfHandler(data.data.backup!, data.meta.type, props.option);
