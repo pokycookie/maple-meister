@@ -94,6 +94,10 @@
       text-align: left;
       font-size: 20px;
       outline: none;
+
+      &:disabled {
+        background-color: transparent;
+      }
     }
   }
   .recipe--result__area {
