@@ -8,25 +8,38 @@ import {
   faScroll,
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import NavigatorIcon from "./navigatorIcon";
+import { motion } from "framer-motion";
+import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import NavigatorMenu from "./navigatorMenu";
 
 function Navigator() {
+  const [isExtended, setIsExtended] = useState(false);
+
   return (
-    <div className="nav">
+    <motion.div className="nav" animate={{ width: isExtended ? 250 : 70 }}>
       <div className="top">
-        <NavigatorIcon icon={faArrowRight} />
+        <div className="menu">
+          <motion.div
+            className="nav-icon-area expendIcon"
+            animate={{ rotate: isExtended ? 180 : 0 }}
+            onClick={() => setIsExtended((prev) => !prev)}
+          >
+            <FontAwesomeIcon className="nav-icon" icon={faArrowRight} />
+          </motion.div>
+        </div>
         <div className="nav-divider"></div>
-        <NavigatorIcon page="timer" icon={faClock} />
-        <NavigatorIcon page="chart" icon={faChartLine} />
-        <NavigatorIcon page="recipe" icon={faScroll} />
+        <NavigatorMenu page="timer" icon={faClock} title="타이머" />
+        <NavigatorMenu page="chart" icon={faChartLine} title="차트" />
+        <NavigatorMenu page="recipe" icon={faScroll} title="레시피" />
         <div className="nav-divider"></div>
-        <NavigatorIcon page="ledger" icon={faRightLeft} />
-        <NavigatorIcon page="item" icon={faCube} />
+        <NavigatorMenu page="ledger" icon={faRightLeft} title="거래 기록" />
+        <NavigatorMenu page="item" icon={faCube} title="아이템" />
       </div>
       <div className="bottom">
-        <NavigatorIcon page="setting" icon={faGear} />
+        <NavigatorMenu page="setting" icon={faGear} title="환경설정" />
       </div>
-    </div>
+    </motion.div>
   );
 }
 

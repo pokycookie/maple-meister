@@ -1,7 +1,9 @@
-import { db, TTransactionType } from "../db";
+import { db, IIngredient, TTransactionType } from "../db";
 import {
   CREATE_ITEM,
   CREATE_ITEM_ERR,
+  CREATE_RECIPE,
+  CREATE_RECIPE_ERR,
   DELETE_ITEM,
   DELETE_ITEMLOG,
   DELETE_ITEMLOG_ERR,
@@ -9,12 +11,16 @@ import {
   DELETE_ITEM_RELATED_ERR,
   DELETE_LEDGER,
   DELETE_LEDGER_ERR,
+  DELETE_RECIPE,
+  DELETE_RECIPE_ERR,
   ITEM_NAME_ERR,
   SAME_PRICE,
   UPDATE_ITEM,
   UPDATE_ITEM_ERR,
   UPDATE_LEDGER,
   UPDATE_LEDGER_ERR,
+  UPDATE_RECIPE,
+  UPDATE_RECIPE_ERR,
 } from "../lang/noti";
 import { Noti } from "../lib/notification";
 
@@ -150,5 +156,46 @@ export const deleteLedger = async (id: number) => {
     // Dexie error
     console.error(err);
     Noti.danger(DELETE_LEDGER_ERR);
+  }
+};
+
+interface ICreateRecipeData {
+  name: string;
+  resultItem: number;
+  resultCount: number;
+  items: IIngredient[];
+}
+
+export const createRecipe = async (data: ICreateRecipeData) => {
+  const { name, resultItem, resultCount, items } = data;
+  try {
+    // Create recipe
+    await db.recipe.add({ name, resultItem, resultCount, items });
+    Noti.success(CREATE_RECIPE);
+  } catch (err) {
+    Noti.danger(CREATE_RECIPE_ERR);
+    throw err;
+  }
+};
+
+export const deleteRecipe = async (recipeID: number) => {
+  try {
+    // Delete recipe
+    db.recipe.delete(recipeID);
+    Noti.success(DELETE_RECIPE);
+  } catch (err) {
+    Noti.success(DELETE_RECIPE_ERR);
+    throw err;
+  }
+};
+
+export const updateRecipe = async (recipeID: number, data: ICreateRecipeData) => {
+  try {
+    // Update recipe
+    db.recipe.update(recipeID, data);
+    Noti.success(UPDATE_RECIPE);
+  } catch (err) {
+    Noti.success(UPDATE_RECIPE_ERR);
+    throw err;
   }
 };

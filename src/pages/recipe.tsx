@@ -1,5 +1,4 @@
-import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
-import { faFolderOpen, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faFolderOpen, faList, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef, useState } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -11,12 +10,13 @@ import "../styles/pages/recipe.scss";
 import PieChart, { IPieData } from "../components/nivo/pieChart";
 import { recipeToPieData } from "../lib/nivo";
 import { ISize } from "../types";
-import RecipeAddModal from "../components/recipeModal/recipeAddModal";
-import RecipeDelModal from "../components/recipeModal/recipeDelModal";
+import RecipeAddModal from "../modals/recipeModal/recipeAddModal";
+import RecipeDelModal from "../modals/recipeModal/recipeDelModal";
 import { ComputedDatum } from "@nivo/pie";
 import ItemPriceInput from "../components/itemPriceInput/itemPriceInput";
 import HiddenDiv from "../components/hiddenDiv/hiddenDiv";
-import RecipePieModal from "../components/recipeModal/recipePieModal";
+import RecipePieModal from "../modals/recipeModal/recipePieModal";
+import RecipeEditModal from "../modals/recipeModal/recipeEditModal";
 
 export interface IDBRecipeExtend extends IDBRecipe {
   cost: number;
@@ -157,15 +157,23 @@ function RecipePage() {
         <button className="add__btn circleBtn" onClick={() => modalHandler("recipeAdd")}>
           <FontAwesomeIcon icon={faPlus} />
         </button>
-        <button className="dlt__btn circleBtn" onClick={() => modalHandler("recipeDel")}>
-          <FontAwesomeIcon icon={faTrashAlt} />
+        <button className="edit_btn circleBtn" onClick={() => modalHandler("recipeEdit")}>
+          <FontAwesomeIcon icon={faList} />
         </button>
       </div>
       <Modal modalID="recipeAdd" width="70%" height="70%" maxWidth="700px" minHeight="400px">
         <RecipeAddModal />
       </Modal>
-      <Modal modalID="recipeDel" width="50%" height="300px" maxWidth="500px" autoClose>
-        <RecipeDelModal />
+      <Modal
+        modalID="recipeEdit"
+        width="70%"
+        height="70%"
+        maxWidth="700px"
+        minHeight="400px"
+        autoClose
+      >
+        {/* <RecipeDelModal /> */}
+        <RecipeEditModal />
       </Modal>
       <Modal modalID="recipePie" width="50%" maxWidth="500px" height="auto" autoClose>
         <RecipePieModal data={selectedPie} />

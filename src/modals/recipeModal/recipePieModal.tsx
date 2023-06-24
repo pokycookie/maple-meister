@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { db, IDBItem, IDBRecipe } from "../../db";
 import { decimalSeparator } from "../../lib/numberString";
 import { updateItem } from "../../utils/dexie";
-import EasyInput from "../easyInput/easyInput";
-import NumberInput from "../numberInput/numberInput";
+import EasyInput from "../../components/easyInput/easyInput";
+import NumberInput from "../../components/numberInput/numberInput";
 import "./recipePieModal.css";
 
 interface IProps {
