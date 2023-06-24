@@ -1,12 +1,42 @@
 .nav {
-  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   box-sizing: border-box;
   padding: 20px 10px;
+}
+
+.nav div {
+  width: 100%;
+}
+
+.menu {
+  display: flex;
+  overflow: hidden;
+  gap: 10px;
+  cursor: pointer;
+  color: white;
+}
+.menu:hover {
+  color: #d28512;
+}
+.menu.selected {
+  color: #d28512;
+}
+
+.menuTitle {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+
+  font-size: 15px;
+  font-weight: 600;
+  user-select: none;
 }
 
 .nav-divider {
@@ -16,12 +46,12 @@
 }
 
 .nav-icon-area {
-  width: 50px;
+  min-width: 50px;
+  max-width: 50px;
   height: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
   cursor: pointer;
 }
 
@@ -29,10 +59,10 @@
   color: #d28512;
 }
 
-.nav-icon-area.selected {
-  color: #d28512;
-}
-
 .nav-icon {
   font-size: 20px;
+}
+
+.expendIcon {
+  color: white;
 }
