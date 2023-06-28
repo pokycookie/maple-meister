@@ -37,7 +37,7 @@ function RecipeEditModal() {
   return (
     <>
       {!editID ? (
-        <div>
+        <div className={styles.container}>
           <h1 className={styles.title}>레시피 목록</h1>
           <ul>
             {recipeList.map((recipe, i) => {
